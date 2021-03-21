@@ -1,4 +1,4 @@
-module github.com/ODIM-Project/ODIM/svc-producer
+module github.com/ODIM-Project/ODIM/svc-consumer
 
 go 1.13
 

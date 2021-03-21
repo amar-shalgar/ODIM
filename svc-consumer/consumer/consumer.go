@@ -30,14 +30,14 @@ import (
 	"net/http"
 	"time"
 	"github.com/go-redis/redis"
-	"encoding/json"
+	//"encoding/json"
 )
 
 func RunEventConsumer(req *consumerproto.ConsumerRequest) response.RPC {
     var resp response.RPC
-    client := pmodel.ConnectRedis()
-    addProduceEventsKey(client, req)
-    go produce(client)
+    client := cmodel.ConnectRedis()
+    addConsumeEventsKey(client, req, "true")
+    go consume(client)
 
     resp.Header = map[string]string{
 		"Allow":             `"GET"`,
@@ -55,9 +55,9 @@ func RunEventConsumer(req *consumerproto.ConsumerRequest) response.RPC {
 
 func StopEventConsumer(req *consumerproto.ConsumerRequest) response.RPC {
     var resp response.RPC
-    client := pmodel.ConnectRedis()
+    client := cmodel.ConnectRedis()
     defer client.Close()
-    addProduceEventsKey(client, req)
+    addConsumeEventsKey(client, req, "false")
 
     resp.Header = map[string]string{
 		"Allow":             `"GET"`,
@@ -73,58 +73,31 @@ func StopEventConsumer(req *consumerproto.ConsumerRequest) response.RPC {
 	return resp
 }
 
-func addProduceEventsKey(client *redis.Client, req *consumerproto.ConsumerRequest) error{
+func addConsumeEventsKey(client *redis.Client, req *consumerproto.ConsumerRequest, val string) error{
     log.Info(req)
-    err := client.Set("ProduceEvents","true",0).Err()
+    err := client.Set("ConsumeEvents", val,0).Err()
     if err!= nil{
         return err
     }
     return nil
 }
 
-func produce(client *redis.Client) {
-    defer client.Close()
-    dt := time.Now()
-	event := pcommon.EventMessageData{
-        OdataType : "#Event.v1_2_1.Event",
-		Name      : "Event Array",
-		Context   : "/redfish/v1/$metadata#Event.Event",
-		Events    : []pcommon.Event{
-					pcommon.Event{MemberID    : "5615",
-					EventType         : "Alert",
-					EventGroupID      : 1,
-					EventID           : "8491",
-					Severity          : "Informational",
-					EventTimestamp    : dt.String(),
-					Message           : "Successfully logged in using admin, from 10.18.1.216 and REDFISH.",
-					MessageID         : "USR0030",
-					OriginOfCondition : pcommon.OdataID{
-											OdataID : "/redfish/v1/Managers/iDRAC.Embedded.1",
-										},
-				}},
-    }
-
-	body,_ := json.Marshal(event)
-	i := 0;
+func consume(client *redis.Client) {
+	defer client.Close()
 	for {
-	    produceEvents, _ := client.Get("ProduceEvents").Result()
-        log.Info("ProduceEvents", produceEvents)
-        if(produceEvents == "false"){
+		consumeEvents, _ := client.Get("ConsumeEvents").Result()
+        log.Info("ConsumeEvents", consumeEvents)
+        if(consumeEvents == "false"){
             break
         }
-        strCMD := client.XAdd(&redis.XAddArgs{
-            Stream: "test",
-            Values: map[string]interface{}{
-                "ID": i,
-                "data": body,
-                },
-        })
-        newID, err := strCMD.Result()
-        if err != nil {
-            log.Error("Event generation error:%v\n", err)
-        } else {
-            log.Info("Event generated:%v,%v\n", i,newID)
-        }
-        i++
-    }
+		res := client.XRead(&redis.XReadArgs{
+				Streams: []string{"test", "$"},
+				Count:   2,
+				Block:   100 * time.Millisecond,
+		})
+		respBody, _ := res.Result()
+		if(len(respBody)>0){
+			log.Info("Event received: ",respBody)
+		}
+	}
 }
