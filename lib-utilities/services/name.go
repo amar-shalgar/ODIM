@@ -36,4 +36,6 @@ const (
 	Update = "svc.update"
 	// Producer
 	Producer = "svc.producer"
+	// Consumer
+	Consumer = "svc.consumer"
 )

@@ -17,7 +17,8 @@ FROM golang:1.13.8
 WORKDIR /ODIM/
 
 COPY svc-account-session /ODIM/svc-account-session
-COPY svc-producer1 /ODIM/svc-producer
+COPY svc-producer /ODIM/svc-producer
+COPY svc-consumer /ODIM/svc-consumer
 COPY svc-aggregation /ODIM/svc-aggregation
 COPY svc-api /ODIM/svc-api
 COPY svc-events /ODIM/svc-events

@@ -63,3 +63,4 @@ eval_cmd_exec "/usr/bin/docker build -f install/Docker/dockerfiles/Dockerfile.up
 eval_cmd_exec "/usr/bin/docker build -f install/Docker/dockerfiles/Dockerfile.zookeeper -t zookeeper:1.0 ." "zookeeper"
 eval_cmd_exec "/usr/bin/docker build -f install/Docker/dockerfiles/Dockerfile.urplugin -t urplugin:1.0 ." "urplugin"
 eval_cmd_exec "/usr/bin/docker build -f install/Docker/dockerfiles/Dockerfile.producer -t producer:1.0 ." "producer"
+eval_cmd_exec "/usr/bin/docker build -f install/Docker/dockerfiles/Dockerfile.consumer -t consumer:1.0 ." "consumer"
