@@ -16,7 +16,7 @@
 package handle
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 
@@ -28,8 +28,8 @@ import (
 
 // ProducerRPCs used to define the service RPC function
 type ProducerRPCs struct {
-	RunEventProducerRPC               func(updateproto.ProducerRequest) (*updateproto.ProducerResponse, error)
-	StopEventProducerRPC              func(updateproto.ProducerRequest) (*updateproto.ProducerResponse, error)
+	RunEventProducerRPC               func(producerproto.ProducerRequest) (*producerproto.ProducerResponse, error)
+	StopEventProducerRPC              func(producerproto.ProducerRequest) (*producerproto.ProducerResponse, error)
 }
 
 // RunEventProducer
@@ -37,14 +37,14 @@ func (a *ProducerRPCs) RunEventProducer(ctx iris.Context) {
 	req := producerproto.ProducerRequest{
 		SessionToken: ctx.Request().Header.Get("X-Auth-Token"),
 	}
-	if req.SessionToken == "" {
+	/*if req.SessionToken == "" {
 		errorMessage := "error: no X-Auth-Token found in request header"
 		log.Error(errorMessage)
 		response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
 		ctx.StatusCode(http.StatusUnauthorized) // TODO: add error headers
 		ctx.JSON(&response.Body)
 		return
-	}
+	}*/
 	resp, err := a.RunEventProducerRPC(req)
 	if err != nil {
 		errorMessage := "error: something went wrong with the RPC calls: " + err.Error()
@@ -63,17 +63,17 @@ func (a *ProducerRPCs) RunEventProducer(ctx iris.Context) {
 
 //StopEventProducer
 func (a *ProducerRPCs) StopEventProducer(ctx iris.Context) {
-	req := producerproto.StopEventProducer{
+	req := producerproto.ProducerRequest{
 		SessionToken: ctx.Request().Header.Get("X-Auth-Token"),
 	}
-	if req.SessionToken == "" {
+	/*if req.SessionToken == "" {
 		errorMessage := "error: no X-Auth-Token found in request header"
 		log.Error(errorMessage)
 		response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
 		ctx.StatusCode(http.StatusUnauthorized) // TODO: add error headers
 		ctx.JSON(&response.Body)
 		return
-	}
+	}*/
 	resp, err := a.StopEventProducerRPC(req)
 	if err != nil {
 		errorMessage := "error: something went wrong with the RPC calls: " + err.Error()

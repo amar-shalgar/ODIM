@@ -27,7 +27,7 @@ import (
 // the GetUpdateService from update micro service
 func RunEventProducer(req producerproto.ProducerRequest) (*producerproto.ProducerResponse, error) {
 
-	update := producerproto.RunEventProducer(services.Producer, services.Service.Client())
+	update := producerproto.NewProducerService(services.Producer, services.Service.Client())
 
 	resp, err := update.RunEventProducer(context.TODO(), &req)
 	if err != nil {
@@ -41,7 +41,7 @@ func RunEventProducer(req producerproto.ProducerRequest) (*producerproto.Produce
 // the GetFirmwareInventory from update micro service
 func StopEventProducer(req producerproto.ProducerRequest) (*producerproto.ProducerResponse, error) {
 
-	produce := producerproto.StopEventProducer(services.Producer, services.Service.Client())
+	produce := producerproto.NewProducerService(services.Producer, services.Service.Client())
 	resp, err := produce.StopEventProducer(context.TODO(), &req)
 	if err != nil {
 		return nil, fmt.Errorf("error: RPC error: %v", err)

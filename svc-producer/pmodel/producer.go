@@ -17,6 +17,7 @@ package pmodel
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/go-redis/redis"
 )
 
 //ConnectRedis

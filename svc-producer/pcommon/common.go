@@ -13,7 +13,7 @@
 // under the License.
 
 //Package ucommon ...
-package ucommon
+package pcommon
 
 type EventMessageData struct {
 	OdataType string         `json:"@odata.type"`

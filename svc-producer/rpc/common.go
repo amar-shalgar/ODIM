@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	producerproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/producer"
 	"github.com/ODIM-Project/ODIM/lib-utilities/response"
-	"github.com/ODIM-Project/ODIM/svc-producer/producer"
+	//"github.com/ODIM-Project/ODIM/svc-producer/producer"
 	log "github.com/sirupsen/logrus"
 )
 

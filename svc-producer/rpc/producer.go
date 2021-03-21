@@ -16,22 +16,24 @@ package rpc
 
 import (
 	"context"
-	log "github.com/sirupsen/logrus"
-	"net/http"
+	//log "github.com/sirupsen/logrus"
+	//"net/http"
 
 	producerproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/producer"
-	"github.com/ODIM-Project/ODIM/lib-utilities/response"
+	//"github.com/ODIM-Project/ODIM/lib-utilities/response"
 	"github.com/ODIM-Project/ODIM/svc-producer/producer"
 )
 
+type Producer struct{}
+
 // RunEventProducer is an rpc handler
-func RunEventProducer(ctx context.Context, req *producerproto.UpdateRequest, resp *producerproto.UpdateResponse) error {
+func (p *Producer) RunEventProducer(ctx context.Context, req *producerproto.ProducerRequest, resp *producerproto.ProducerResponse) error {
     fillProtoResponse(resp, producer.RunEventProducer(req))
 	return nil
 }
 
 // StopEventProducer is an rpc handler
-func StopEventProducer(ctx context.Context, req *producerproto.UpdateRequest, resp *producerproto.UpdateResponse) error {
+func  (p *Producer) StopEventProducer(ctx context.Context, req *producerproto.ProducerRequest, resp *producerproto.ProducerResponse) error {
 	fillProtoResponse(resp, producer.RunEventProducer(req))
 	return nil
 }

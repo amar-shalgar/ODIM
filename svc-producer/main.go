@@ -14,10 +14,10 @@
 package main
 
 import (
-	"os"
+	//"os"
 
-	"github.com/ODIM-Project/ODIM/lib-utilities/common"
-	"github.com/ODIM-Project/ODIM/lib-utilities/config"
+    //"github.com/ODIM-Project/ODIM/lib-utilities/common"
+	//"github.com/ODIM-Project/ODIM/lib-utilities/config"
 	producerproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/producer"
 	"github.com/ODIM-Project/ODIM/lib-utilities/services"
 	"github.com/ODIM-Project/ODIM/svc-producer/rpc"
@@ -57,14 +57,24 @@ func main() {
 	if err := services.Service.Run(); err != nil {
 		log.Error(err)
 	}
-
 }
+
+/*func registerHandlers() {
+	err := services.InitializeService(services.Update)
+	if err != nil {
+		log.Error("fatal: error while trying to initialize service: " + err.Error())
+	}
+	updater := rpc.GetUpdater()
+	updateproto.RegisterUpdateHandler(services.Service.Server(), updater)
+}*/
+
 
 func registerHandlers() {
 	err := services.InitializeService(services.Producer)
 	if err != nil {
 		log.Error("fatal: error while trying to initialize service: " + err.Error())
 	}
-	producer := rpc.GetProducer()
-	producerproto.RegisterProducerHandler(services.Service.Server(), producer)
+	//producer := rpc.GetProducer()
+	producerproto.RegisterProducerHandler(services.Service.Server(), new(rpc.Producer))
+//	sessionproto.RegisterSessionHandler(services.Service.Server(), new(rpc.Session))
 }

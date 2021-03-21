@@ -19,19 +19,24 @@ package producer
 // IMPORT Section
 //
 import (
-	"github.com/ODIM-Project/ODIM/lib-utilities/common"
-	"github.com/ODIM-Project/ODIM/lib-utilities/config"
+	//"github.com/ODIM-Project/ODIM/lib-utilities/common"
+	//"github.com/ODIM-Project/ODIM/lib-utilities/config"
 	producerproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/producer"
 	"github.com/ODIM-Project/ODIM/lib-utilities/response"
-	"github.com/ODIM-Project/ODIM/svc-update/pcommon"
+	"github.com/ODIM-Project/ODIM/svc-producer/pcommon"
 	"github.com/ODIM-Project/ODIM/svc-producer/pmodel"
 	log "github.com/sirupsen/logrus"
+
+	"net/http"
+	"time"
+	"github.com/go-redis/redis"
+	"encoding/json"
 )
 
 func RunEventProducer(req *producerproto.ProducerRequest) response.RPC {
     var resp response.RPC
     client := pmodel.ConnectRedis()
-    addProduceEventsKey(client)
+    addProduceEventsKey(client, req)
     go produce(client)
 
     resp.Header = map[string]string{
@@ -51,7 +56,7 @@ func RunEventProducer(req *producerproto.ProducerRequest) response.RPC {
 func StopEventProducer(req *producerproto.ProducerRequest) response.RPC {
     var resp response.RPC
     client := pmodel.ConnectRedis()
-    defer client.close()
+    defer client.Close()
     addProduceEventsKey(client, req)
 
     resp.Header = map[string]string{
@@ -68,7 +73,8 @@ func StopEventProducer(req *producerproto.ProducerRequest) response.RPC {
 	return resp
 }
 
-func addProduceEventsKey(client *redis.Client) error{
+func addProduceEventsKey(client *redis.Client, req *producerproto.ProducerRequest) error{
+    log.Info(req)
     err := client.Set("ProduceEvents","true",0).Err()
     if err!= nil{
         return err
