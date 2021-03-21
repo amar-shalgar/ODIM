@@ -75,7 +75,7 @@ spec:
           image: consumer:{{ .Values.odimra.consumerImageTag }}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 45110
+            - containerPort: 45111
           volumeMounts:
             - name: odimra-config-vol
               mountPath: /etc/odimra_config

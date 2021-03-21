@@ -7,7 +7,7 @@ metadata:
     app: consumer
 spec:
   ports:
-    - port: 45110
+    - port: 45111
   selector:
     app: consumer
 
