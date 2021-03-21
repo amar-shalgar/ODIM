@@ -34,4 +34,6 @@ const (
 	Managers = "svc.managers"
 	// Update holds the name for the Update Micro Service
 	Update = "svc.update"
+	// Producer
+	Producer = "svc.producer"
 )

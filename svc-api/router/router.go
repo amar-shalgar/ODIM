@@ -133,6 +133,16 @@ func Router() *iris.Application {
 		GetSoftwareInventoryCollectionRPC: rpc.DoGetSoftwareInventoryCollection,
 	}
 
+	eventproducer := handle.ProducerRPCs{
+		RunEventProducerRPC:               rpc.RunEventProducer,
+		StopEventProducerRPC:              rpc.StopEventProducer,
+	}
+
+	/*eventconsumer := handle.EventConsumerRPCs{
+		RunEventConsumerRPC:               rpc.RunEventConsumer,
+		StopEventConsumerRPC:              rpc.StopEventConsumer,
+	}*/
+
 	registryFile := handle.Registry{
 		Auth: srv.IsAuthorized,
 	}
@@ -436,5 +446,16 @@ func Router() *iris.Application {
 	updateService.Get("/FirmwareInventory/{firmwareInventory_id}", update.GetFirmwareInventory)
 	updateService.Get("/SoftwareInventory", update.GetSoftwareInventoryCollection)
 	updateService.Get("/SoftwareInventory/{softwareInventory_id}", update.GetSoftwareInventory)
+
+	producer := v1.Party("/EventProducer",middleware.SessionDelMiddleware)
+	producer.SetRegisterRule(iris.RouteSkip)
+	producer.Post("/Run", eventproducer.RunEventProducer)
+	producer.Post("/Stop", eventproducer.StopEventProducer)
+
+	/*consumer := v1.Party("/EventConsumer",middleware.SessionDelMiddleware)
+	consumer.SetRegisterRule(iris.RouteSkip)
+	consumer.Post("/Consume", eventconsumer.RunEventConsumer)
+	consumer.Post("/Stop", eventconsumer.StopEventConsumer)*/
+
 	return router
 }
