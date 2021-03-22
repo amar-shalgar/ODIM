@@ -36,7 +36,7 @@ import (
 func RunEventProducer(req *producerproto.ProducerRequest) response.RPC {
     var resp response.RPC
     client := pmodel.ConnectRedis()
-    addProduceEventsKey(client, req)
+    addProduceEventsKey(client, req, "true")
     go produce(client)
 
     resp.Header = map[string]string{
@@ -57,7 +57,7 @@ func StopEventProducer(req *producerproto.ProducerRequest) response.RPC {
     var resp response.RPC
     client := pmodel.ConnectRedis()
     //defer client.Close()
-    addProduceEventsKey(client, req)
+    addProduceEventsKey(client, req, "false")
 
     resp.Header = map[string]string{
 		"Allow":             `"GET"`,
@@ -73,9 +73,9 @@ func StopEventProducer(req *producerproto.ProducerRequest) response.RPC {
 	return resp
 }
 
-func addProduceEventsKey(client *redis.Client, req *producerproto.ProducerRequest) error{
+func addProduceEventsKey(client *redis.Client, req *producerproto.ProducerRequest,val string) error{
     log.Info(req)
-    err := client.Set("ProduceEvents","true",0).Err()
+    err := client.Set("ProduceEvents",val,0).Err()
     if err!= nil{
         return err
     }

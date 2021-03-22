@@ -23,7 +23,8 @@ import (
 //ConnectRedis
 func ConnectRedis() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		//Addr: "localhost:6379",
+		Addr: "redis-inmemory:6379",
 		Password: "",
 		DB: 0,
 	})
