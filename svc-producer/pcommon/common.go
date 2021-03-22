@@ -16,6 +16,7 @@
 package pcommon
 
 type EventMessageData struct {
+    Id        int            `json:"Id,omitempty"`
 	OdataType string         `json:"@odata.type"`
 	Name      string         `json:"Name"`
 	Context   string         `json:"@odata.context"`

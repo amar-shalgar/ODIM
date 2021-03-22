@@ -103,12 +103,12 @@ func produce(client *redis.Client) {
 										},
 				}},
     }
-
-	body,_ := json.Marshal(event)
+    body,_ := json.Marshal(event)
 	i := 0;
 	for {
+	    //event.Id = i
 	    produceEvents, _ := client.Get("ProduceEvents").Result()
-        log.Info("ProduceEvents", produceEvents)
+        //log.Info("ProduceEvents : ", produceEvents)
         if(produceEvents == "false"){
             break
         }
@@ -123,8 +123,10 @@ func produce(client *redis.Client) {
         if err != nil {
             log.Error("Event generation error:%v\n", err)
         } else {
-            log.Info("Event generated:%v,%v\n", i,newID)
+            log.Info("Event Id:", i)
+            log.Info("Event generated id:", newID)
         }
         i++
     }
+    log.Info("Number of events generated : ",i)
 }

@@ -86,7 +86,7 @@ func consume(client *redis.Client) {
 	//defer client.Close()
 	for {
 		consumeEvents, _ := client.Get("ConsumeEvents").Result()
-        log.Info("ConsumeEvents", consumeEvents)
+        //log.Info("ConsumeEvents", consumeEvents)
         if(consumeEvents == "false"){
             break
         }
