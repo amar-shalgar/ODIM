@@ -31,6 +31,7 @@ odim_third_party_ha_helmcharts:
 odim_svc_helmcharts:
    account-session: account-session-0.1.0
    producer: producer-0.1.0
+   consumer: consumer-0.1.0
    aggregation: aggregation-0.1.0
    api: api-0.1.0
    events: events-0.1.0
@@ -42,6 +43,7 @@ odim_svc_helmcharts:
 odim_docker_images:
    account-session: account-session
    producer: producer
+   consumer: consumer
    aggregation: aggregation
    api: api
    events: events
