@@ -56,7 +56,7 @@ func RunEventConsumer(req *consumerproto.ConsumerRequest) response.RPC {
 func StopEventConsumer(req *consumerproto.ConsumerRequest) response.RPC {
     var resp response.RPC
     client := cmodel.ConnectRedis()
-    defer client.Close()
+    //defer client.Close()
     addConsumeEventsKey(client, req, "false")
 
     resp.Header = map[string]string{
@@ -83,7 +83,7 @@ func addConsumeEventsKey(client *redis.Client, req *consumerproto.ConsumerReques
 }
 
 func consume(client *redis.Client) {
-	defer client.Close()
+	//defer client.Close()
 	for {
 		consumeEvents, _ := client.Get("ConsumeEvents").Result()
         log.Info("ConsumeEvents", consumeEvents)

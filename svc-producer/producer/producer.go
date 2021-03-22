@@ -56,7 +56,7 @@ func RunEventProducer(req *producerproto.ProducerRequest) response.RPC {
 func StopEventProducer(req *producerproto.ProducerRequest) response.RPC {
     var resp response.RPC
     client := pmodel.ConnectRedis()
-    defer client.Close()
+    //defer client.Close()
     addProduceEventsKey(client, req)
 
     resp.Header = map[string]string{
@@ -83,7 +83,7 @@ func addProduceEventsKey(client *redis.Client, req *producerproto.ProducerReques
 }
 
 func produce(client *redis.Client) {
-    defer client.Close()
+    //defer client.Close()
     dt := time.Now()
 	event := pcommon.EventMessageData{
         OdataType : "#Event.v1_2_1.Event",

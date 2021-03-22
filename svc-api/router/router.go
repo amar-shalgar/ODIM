@@ -138,10 +138,10 @@ func Router() *iris.Application {
 		StopEventProducerRPC:              rpc.StopEventProducer,
 	}
 
-	/*eventconsumer := handle.EventConsumerRPCs{
+	eventconsumer := handle.ConsumerRPCs{
 		RunEventConsumerRPC:               rpc.RunEventConsumer,
 		StopEventConsumerRPC:              rpc.StopEventConsumer,
-	}*/
+	}
 
 	registryFile := handle.Registry{
 		Auth: srv.IsAuthorized,
@@ -452,10 +452,10 @@ func Router() *iris.Application {
 	producer.Post("/Run", eventproducer.RunEventProducer)
 	producer.Post("/Stop", eventproducer.StopEventProducer)
 
-	/*consumer := v1.Party("/EventConsumer",middleware.SessionDelMiddleware)
+	consumer := v1.Party("/EventConsumer",middleware.SessionDelMiddleware)
 	consumer.SetRegisterRule(iris.RouteSkip)
 	consumer.Post("/Consume", eventconsumer.RunEventConsumer)
-	consumer.Post("/Stop", eventconsumer.StopEventConsumer)*/
+	consumer.Post("/Stop", eventconsumer.StopEventConsumer)
 
 	return router
 }

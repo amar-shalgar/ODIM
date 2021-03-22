@@ -151,7 +151,23 @@ func getService(microServices []string, uuid string) models.ServiceRoot {
 					serviceRoot.UpdateService = &models.Service{OdataID: servicePath}
 				}
 			}
+		
+		case "Producer":
+			serviceNodes, err := reg.GetService(srv.Producer)
+			if err == nil {
+				if len(serviceNodes) != 0 {
+					serviceRoot.Producer = &models.Service{OdataID: servicePath}
+				}
+			}
+		case "Consumer":
+			serviceNodes, err := reg.GetService(srv.Consumer)
+			if err == nil {
+				if len(serviceNodes) != 0 {
+					serviceRoot.Consumer = &models.Service{OdataID: servicePath}
+				}
+			}		
 		}
+		
 	}
 
 	return serviceRoot

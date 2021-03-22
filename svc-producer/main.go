@@ -14,10 +14,10 @@
 package main
 
 import (
-	//"os"
+	"os"
 
-    //"github.com/ODIM-Project/ODIM/lib-utilities/common"
-	//"github.com/ODIM-Project/ODIM/lib-utilities/config"
+    "github.com/ODIM-Project/ODIM/lib-utilities/common"
+	"github.com/ODIM-Project/ODIM/lib-utilities/config"
 	producerproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/producer"
 	"github.com/ODIM-Project/ODIM/lib-utilities/services"
 	"github.com/ODIM-Project/ODIM/svc-producer/rpc"
@@ -27,7 +27,7 @@ import (
 var log = logrus.New()
 
 func main() {
-	/*//log.SetFormatter(&log.TextFormatter{})
+	//log.SetFormatter(&log.TextFormatter{})
 	// verifying the uid of the user
 	if uid := os.Geteuid(); uid == 0 {
 		log.Error("System Service should not be run as the root user")
@@ -47,7 +47,7 @@ func main() {
 	eventChan := make(chan interface{})
 	// TrackConfigFileChanges monitors the odim config changes using fsnotfiy
 	go common.TrackConfigFileChanges(configFilePath, eventChan)
-    */
+
 	err := services.InitializeService(services.Producer)
 	if err != nil {
 		log.Error("fatal: error while trying to initialize the service: " + err.Error())
@@ -59,22 +59,12 @@ func main() {
 	}
 }
 
-/*func registerHandlers() {
-	err := services.InitializeService(services.Update)
-	if err != nil {
-		log.Error("fatal: error while trying to initialize service: " + err.Error())
-	}
-	updater := rpc.GetUpdater()
-	updateproto.RegisterUpdateHandler(services.Service.Server(), updater)
-}*/
-
-
 func registerHandlers() {
-	err := services.InitializeService(services.Producer)
+	/*err := services.InitializeService(services.Producer)
 	if err != nil {
 		log.Error("fatal: error while trying to initialize service: " + err.Error())
-	}
+	}*/
 	//producer := rpc.GetProducer()
 	producerproto.RegisterProducerHandler(services.Service.Server(), new(rpc.Producer))
-//	sessionproto.RegisterSessionHandler(services.Service.Server(), new(rpc.Session))
 }
+
