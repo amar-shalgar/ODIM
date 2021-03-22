@@ -34,6 +34,6 @@ func (p *Producer) RunEventProducer(ctx context.Context, req *producerproto.Prod
 
 // StopEventProducer is an rpc handler
 func  (p *Producer) StopEventProducer(ctx context.Context, req *producerproto.ProducerRequest, resp *producerproto.ProducerResponse) error {
-	fillProtoResponse(resp, producer.RunEventProducer(req))
+	fillProtoResponse(resp, producer.StopEventProducer(req))
 	return nil
 }

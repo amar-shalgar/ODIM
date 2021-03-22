@@ -34,6 +34,6 @@ func (p *Consumer) RunEventConsumer(ctx context.Context, req *consumerproto.Cons
 
 // StopEventConsumer is an rpc handler
 func  (p *Consumer) StopEventConsumer(ctx context.Context, req *consumerproto.ConsumerRequest, resp *consumerproto.ConsumerResponse) error {
-	fillProtoResponse(resp, consumer.RunEventConsumer(req))
+	fillProtoResponse(resp, consumer.StopEventConsumer(req))
 	return nil
 }
