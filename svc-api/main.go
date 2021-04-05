@@ -68,18 +68,34 @@ func main() {
 					spl := strings.Split(basicAuth, " ")
 					data, err := base64.StdEncoding.DecodeString(spl[1])
 					if err != nil {
+						errorMessage := "Error during decoding the authorization : " + err.Error()
 						log.Error(err.Error())
+						w.Header().Set("Content-type", "application/json; charset=utf-8")
+                        w.WriteHeader(http.StatusInternalServerError)
+                        body, _ := json.Marshal(common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil).Body)
+                        w.Write([]byte(body))
 						return
 					}
 					userCred := strings.SplitN(string(data), ":", 2)
 					if len(userCred) < 2 {
-						log.Error("Invalid basic auth provided for " + username)
+					    errorMessage := "Invalid basic auth provided"
+						log.Error(errorMessage)
+						w.Header().Set("Content-type", "application/json; charset=utf-8")
+					    w.WriteHeader(http.StatusUnauthorized)
+					    body, _ := json.Marshal(common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil).Body)
+					    w.Write([]byte(body))
 						return
 					}
 					username = userCred[0]
 					password = userCred[1]
 				} else {
-					log.Error("Invalid basic auth provided for " + username)
+				    errorMessage := "Invalid basic auth provided"
+					log.Error(errorMessage)
+					response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
+		            w.Header().Set("Content-type", "application/json; charset=utf-8")
+					w.WriteHeader(http.StatusUnauthorized)
+					body, _ := json.Marshal(common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil).Body)
+					w.Write([]byte(body))
 					return
 				}
 
