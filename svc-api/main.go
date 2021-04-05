@@ -91,7 +91,6 @@ func main() {
 				} else {
 				    errorMessage := "Invalid basic auth provided"
 					log.Error(errorMessage)
-					response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
 		            w.Header().Set("Content-type", "application/json; charset=utf-8")
 					w.WriteHeader(http.StatusUnauthorized)
 					body, _ := json.Marshal(common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil).Body)
