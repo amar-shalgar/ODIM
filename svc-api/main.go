@@ -66,32 +66,32 @@ func main() {
 				yes := strings.Contains(basicAuth, "Basic")
 				if yes {
 					spl := strings.Split(basicAuth, " ")
-					if(len(spl) != 2){
-					    errorMessage := "Invalid basic auth provided"
+					if len(spl) != 2 {
+						errorMessage := "Invalid basic auth provided"
 						log.Error(errorMessage)
-                        invalidAuthResp(errorMessage,w)
+						invalidAuthResp(errorMessage, w)
 						return
 					}
 					data, err := base64.StdEncoding.DecodeString(spl[1])
 					if err != nil {
 						errorMessage := "Error during decoding the authorization : " + err.Error()
 						log.Error(err.Error())
-						invalidAuthResp(errorMessage,w)
+						invalidAuthResp(errorMessage, w)
 						return
 					}
 					userCred := strings.SplitN(string(data), ":", 2)
 					if len(userCred) < 2 {
-					    errorMessage := "Invalid basic auth provided"
+						errorMessage := "Invalid basic auth provided"
 						log.Error(errorMessage)
-					    invalidAuthResp(errorMessage,w)
+						invalidAuthResp(errorMessage, w)
 						return
 					}
 					username = userCred[0]
 					password = userCred[1]
 				} else {
-				    errorMessage := "Invalid basic auth provided"
+					errorMessage := "Invalid basic auth provided"
 					log.Error(errorMessage)
-					invalidAuthResp(errorMessage,w)
+					invalidAuthResp(errorMessage, w)
 					return
 				}
 
@@ -180,9 +180,9 @@ func main() {
 }
 
 // invalidAuthResp function is used to generate an invalid credentials response
-func invalidAuthResp(errMsg string, w http.ResponseWriter){
-    w.Header().Set("Content-type", "application/json; charset=utf-8")
-    w.WriteHeader(http.StatusUnauthorized)
-    body, _ := json.Marshal(common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errMsg, nil, nil).Body)
-    w.Write([]byte(body))
+func invalidAuthResp(errMsg string, w http.ResponseWriter) {
+	w.Header().Set("Content-type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusUnauthorized)
+	body, _ := json.Marshal(common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errMsg, nil, nil).Body)
+	w.Write([]byte(body))
 }
