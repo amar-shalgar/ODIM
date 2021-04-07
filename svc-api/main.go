@@ -74,7 +74,7 @@ func main() {
 					}
 					data, err := base64.StdEncoding.DecodeString(spl[1])
 					if err != nil {
-						errorMessage := "Error during decoding the authorization : " + err.Error()
+						errorMessage := "Decoding the authorization failed: " + err.Error()
 						log.Error(err.Error())
 						invalidAuthResp(errorMessage, w)
 						return
