@@ -43,6 +43,17 @@ func mockDevice(username, password, url string, w http.ResponseWriter) {
 		Name:         "Volume Collection",
 	}
 
+	firmware := dpmodel.FirmwareVersion{
+	    FirmwareVersion: "4.40.10.00",
+	}
+
+	if url == "/redfish/v1/Managers/1" {
+	    e, _ := json.Marshal(firmware)
+	    w.WriteHeader(http.StatusOK)
+		w.Write(e)
+		return
+	}
+
 	if url == "/ODIM/v1/Systems/1/Storage/1/Volumes" && username == "admin" {
 		e, _ := json.Marshal(volume)
 		w.WriteHeader(http.StatusOK)
