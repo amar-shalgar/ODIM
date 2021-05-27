@@ -20,7 +20,7 @@ type Volume struct {
 	Name       string        `json:"Name" validate:"required"`
 	RAIDType   string        `json:"RAIDType"`
 	Drives     []OdataIDLink `json:"Drives"`
-	VolumeType string        `json:"VolumeType"`
+	OperationApplyTime string  `json:"@Redfish.OperationApplyTime"`
 }
 
 // OdataIDLink contains link to a resource
@@ -37,4 +37,8 @@ type VolumesCollection struct {
 	Name         string        `json:"Name"`
 	Members      []OdataIDLink `json:"Members"`
 	MembersCount int           `json:"Members@odata.count"`
+}
+
+type FirmwareVersion struct {
+    FirmwareVersion string `json:"FirmwareVersion"`
 }
