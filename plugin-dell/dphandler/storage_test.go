@@ -48,7 +48,7 @@ func mockDevice(username, password, url string, w http.ResponseWriter) {
 	}
 
 	firmwareOld := dpmodel.FirmwareVersion{
-	    FirmwareVersion: "4.39.10.00",
+		FirmwareVersion: "4.39.10.00",
 	}
 
 	if url == "/redfish/v1/Managers/1" {
@@ -59,8 +59,8 @@ func mockDevice(username, password, url string, w http.ResponseWriter) {
 	}
 
 	if url == "/redfish/v1/Managers/2" {
-	    e, _ := json.Marshal(firmwareOld)
-	    w.WriteHeader(http.StatusOK)
+		e, _ := json.Marshal(firmwareOld)
+		w.WriteHeader(http.StatusOK)
 		w.Write(e)
 		return
 	}
@@ -127,7 +127,7 @@ func TestCreateVolume(t *testing.T) {
 	invalidRequestBody := "invalid"
 	e.POST("/redfish/v1/Systems/1/Storage/1/Volumes").WithJSON(invalidRequestBody).Expect().Status(http.StatusBadRequest)
 
-    // Unit test for firmware version less than 4.40
+	// Unit test for firmware version less than 4.40
 	reqPostBody = map[string]interface{}{
 		"Name":     "Volume_Test2",
 		"RAIDType": "RAID0",
@@ -140,7 +140,7 @@ func TestCreateVolume(t *testing.T) {
 		"Password":       []byte("P@$$w0rd"),
 		"PostBody":       reqBodyBytes,
 	}
-   	//Unit Test for firmware version less than 4.40 scenario
+	//Unit Test for firmware version less than 4.40 scenario
 	e.POST("/redfish/v1/Systems/2/Storage/1/Volumes").WithJSON(requestBody).Expect().Status(http.StatusBadRequest)
 }
 
