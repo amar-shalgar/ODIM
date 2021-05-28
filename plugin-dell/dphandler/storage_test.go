@@ -44,7 +44,7 @@ func mockDevice(username, password, url string, w http.ResponseWriter) {
 	}
 
 	firmware := dpmodel.FirmwareVersion{
-	    FirmwareVersion: "4.40.10.00",
+		FirmwareVersion: "4.40.10.00",
 	}
 
 	firmwareOld := dpmodel.FirmwareVersion{
@@ -52,8 +52,8 @@ func mockDevice(username, password, url string, w http.ResponseWriter) {
 	}
 
 	if url == "/redfish/v1/Managers/1" {
-	    e, _ := json.Marshal(firmware)
-	    w.WriteHeader(http.StatusOK)
+		e, _ := json.Marshal(firmware)
+		w.WriteHeader(http.StatusOK)
 		w.Write(e)
 		return
 	}
