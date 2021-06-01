@@ -26,7 +26,7 @@ if [ -a build/docker-compose.yml ]; then
 	rm -rf odimra/odimra_config/platformconfig.toml
 	rm -rf odimra/odimra_config/schema.json
 	rm -rf odimra/odimra_config/registrystore/*
-        rm -rf RFPlugin/plugin_config/*
+        rm -rf RFPlugin/lenovo_plugin_config/*
 	sudo rm -rf /var/log/odimra
 	sudo rm -rf /var/log/GRF_PLUGIN
 	sudo rm -rf Consul/data/*

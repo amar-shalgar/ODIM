@@ -1,0 +1,12 @@
+odimra:
+  namespace: odim
+  groupID:
+  haDeploymentEnabled:
+lenovoplugin:
+  eventListenerNodePort: 30081
+  logPath: /var/log/lenovoplugin_logs
+  rootServiceUUID:
+  username: admin
+  password: "UUFCYFpBoHh6UdvytPzm65SkHj5zyl73EYVNJNbrFeAPWYrkpTijGB9zrVQSbbLv052HK7-7chqDQQcjgWf7YA=="
+  lbHost:
+  lbPort:
