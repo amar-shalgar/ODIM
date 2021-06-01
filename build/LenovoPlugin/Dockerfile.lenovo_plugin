@@ -34,7 +34,7 @@ RUN  useradd -s /bin/bash -u 1235 -m -d /home/plugin -r -g plugin plugin
 COPY LenovoPlugin/lenovo_plugin_config/config_lenovo_plugin.json /var/lenovo_plugin_config/
 COPY LenovoPlugin/lenovo_plugin_config/platformconfig.toml /var/lenovo_plugin_config/
 COPY LenovoPlugin/start_plugin.sh /bin/
-COPY LenovoPlugin/edit_config.sh /var/tmp/edit_config.sh
+COPY LenovoPlugin/edit_config.sh /var/tmp/lenovo_plugin-edit_config.sh
 COPY LenovoPlugin/command.sh /bin/
 COPY --from=build-stage /odimra/plugin-lenovo/plugin-lenovo /bin/
 

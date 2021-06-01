@@ -19,13 +19,13 @@
 t=/etc/lenovo_plugin_certs
 ip=`echo $HOSTIP`
 
-#########changes in redfish_plugin.json ######
+#########changes in lenovo_plugin.json ######
 RootServiceUUID=$(uuidgen)
 sed -i "s#\"RootServiceUUID\".*#\"RootServiceUUID\": \"${RootServiceUUID}\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
-sed -i "s#\"ID\".*#\"ID\": \"GRF\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
-sed -i "s#\"Host\".*#\"Host\": \"grf_plugin\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
+sed -i "s#\"ID\".*#\"ID\": \"LENOVO\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
+sed -i "s#\"Host\".*#\"Host\": \"lenovo_plugin\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
 sed -i "s#\"Port\".*#\"Port\": \"45001\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
-sed -i "s#\"ListenerHost\".*#\"ListenerHost\": \"grf_plugin\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
+sed -i "s#\"ListenerHost\".*#\"ListenerHost\": \"lenovo_plugin\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
 sed -i "s#\"ListenerPort\".*#\"ListenerPort\": \"45002\"#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
 sed -i "s#\"RootCACertificatePath\".*#\"RootCACertificatePath\": \"$t/rootCA.crt\",#" /etc/lenovo_plugin_config/config_lenovo_plugin.json
 sed -i "s#\"PrivateKeyPath\".*#\"PrivateKeyPath\": \"$t/odimra_server.key\",#"  /etc/lenovo_plugin_config/config_lenovo_plugin.json

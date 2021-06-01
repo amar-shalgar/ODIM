@@ -16,4 +16,4 @@
 # Script is for generating certificate and private key
 # for Client mode connection usage only
 
-cp -r /var/lenovo_plugin_config/ /etc && /var/tmp/edit_config.sh && rm -rf /var/lenovo_plugin_config/* && /bin/start_plugin.sh
+cp -r /var/lenovo_plugin_config/ /etc && /var/tmp/lenovo_plugin-edit_config.sh && rm -rf /var/lenovo_plugin_config/* && /bin/start_plugin.sh
