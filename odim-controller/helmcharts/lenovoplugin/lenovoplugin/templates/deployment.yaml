@@ -65,8 +65,8 @@ spec:
           image: lenovoplugin:{{ .Values.lenovoplugin.imageTag }}
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 45001
-            - containerPort: 45002
+            - containerPort: 45009
+            - containerPort: 45010
           volumeMounts:
             - name: lenovoplugin-config-vol
               mountPath: /etc/lenovoplugin_config
