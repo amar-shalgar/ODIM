@@ -75,4 +75,4 @@ spec:
             - name: lenovoplugin-log
               mountPath: /var/log/lenovoplugin_logs
             - name: odimra-secret
-              mountPath: /etc/lenovoplugin_certs
+              mountPath: /etc/odimra_certs

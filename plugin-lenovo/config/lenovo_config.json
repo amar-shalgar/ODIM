@@ -1,16 +1,16 @@
 {
 	"RootServiceUUID": "",
 	"PluginConf": {
-		"ID": "GRF",
+		"ID": "LENOVO",
 		"Host": "",
-		"Port": "45001",
+		"Port": "45009",
 		"UserName": "admin",
 		"Password": "UUFCYFpBoHh6UdvytPzm65SkHj5zyl73EYVNJNbrFeAPWYrkpTijGB9zrVQSbbLv052HK7-7chqDQQcjgWf7YA=="
 	},
 	"EventConf": {
 		"DestinationURI": "/redfishEventListener",
 		"ListenerHost": "",
-		"ListenerPort": "45002"
+		"ListenerPort": "45010"
 	},
 	"KeyCertConf": {
 		"RootCACertificatePath": "",

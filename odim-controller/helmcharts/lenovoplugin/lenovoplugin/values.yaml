@@ -7,7 +7,7 @@ lenovoplugin:
   eventListenerNodePort:
   imageTag: "1.0"
   logPath:
-  rootServiceUUID:
+  lenovoPluginRootServiceUUID:
   username:
   password:
   host: lenovoplugin

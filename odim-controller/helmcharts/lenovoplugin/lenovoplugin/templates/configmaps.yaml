@@ -6,23 +6,23 @@ metadata:
 data: 
   config.json: |
     {
-    	"RootServiceUUID": {{ .Values.lenovoplugin.rootServiceUUID | quote }},
+    	"RootServiceUUID": {{ .Values.lenovoplugin.lenovoPluginRootServiceUUID | quote }},
     	"PluginConf": {
     		"ID": "LENOVO",
     		"Host": {{ .Values.lenovoplugin.host | quote }},
-    		"Port": "45001",
+    		"Port": "45009",
     		"UserName": {{ .Values.lenovoplugin.username | quote }},
     		"Password": {{ .Values.lenovoplugin.password | quote }}
     	},
     	"EventConf": {
     		"DestinationURI": "/redfishEventListener",
     		"ListenerHost": {{ .Values.lenovoplugin.eventHost | quote }},
-    		"ListenerPort": "45002"
+    		"ListenerPort": "45010"
     	},
     	"KeyCertConf": {
-    		"RootCACertificatePath": "/etc/lenovoplugin_certs/rootCA.crt",
-    		"PrivateKeyPath": "/etc/lenovoplugin_certs/odimra_server.key",
-    		"CertificatePath": "/etc/lenovoplugin_certs/odimra_server.crt"
+    		"RootCACertificatePath": "/etc/odimra_certs/rootCA.crt",
+    		"PrivateKeyPath": "/etc/odimra_certs/odimra_server.key",
+    		"CertificatePath": "/etc/odimra_certs/odimra_server.crt"
     	},
     	"TLSConf" : {
     		"MinVersion": "TLS_1.2",
