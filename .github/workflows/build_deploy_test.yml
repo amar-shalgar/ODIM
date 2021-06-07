@@ -47,7 +47,7 @@ jobs:
         sleep 15s
         b=`pgrep -f -c 'svc-api|svc-account-session|svc-aggregation|svc-events|svc-systems|svc-task|svc-fabrics|svc-managers|svc-update|plugin-redfish|urp|plugin-dell|plugin-lenovo'`
         echo "Detected number of ODIM related processes: " $b
-        if [ $b -eq 24 ];
+        if [ $b -eq 25 ];
         then
             echo "ODIMRA processes & GRF,Dell, urp and Lenovo plugin are up & running"
             echo "Deployment sucessful" 
