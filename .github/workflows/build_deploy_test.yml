@@ -45,11 +45,11 @@ jobs:
         export HOSTIP=${HOSTIP}
         make all
         sleep 15s
-        b=`pgrep -f -c 'svc-api|svc-account-session|svc-aggregation|svc-events|svc-systems|svc-task|svc-fabrics|svc-managers|svc-update|plugin-redfish|urp|plugin-dell'`
+        b=`pgrep -f -c 'svc-api|svc-account-session|svc-aggregation|svc-events|svc-systems|svc-task|svc-fabrics|svc-managers|svc-update|plugin-redfish|urp|plugin-dell|plugin-lenovo'`
         echo "Detected number of ODIM related processes: " $b
-        if [ $b -eq 23 ];
+        if [ $b -eq 24 ];
         then
-            echo "ODIMRA processes & GRF,Dell, urp and Lenovo  plugin are up & running"
+            echo "ODIMRA processes & GRF,Dell, urp and Lenovo plugin are up & running"
             echo "Deployment sucessful" 
         else
             echo "ODIMRA processes or GRF,Dell, urp and Lenovo plugin failed to come up. Check ODIMRA or PLUGIN logs"
