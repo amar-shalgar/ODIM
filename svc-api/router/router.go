@@ -21,11 +21,11 @@ import (
 	"github.com/ODIM-Project/ODIM/svc-api/handle"
 	"github.com/ODIM-Project/ODIM/svc-api/middleware"
 	"github.com/ODIM-Project/ODIM/svc-api/rpc"
-	"net/url"
-	"net/http"
-	"strings"
-    log "github.com/sirupsen/logrus"
 	"github.com/kataras/iris/v12"
+	log "github.com/sirupsen/logrus"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 //Router method to register API handlers.
@@ -159,14 +159,14 @@ func Router() *iris.Application {
 
 	// Parses the URL and performs URL decoding for path
 	router.WrapRouter(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	    rawURI := r.RequestURI
+		rawURI := r.RequestURI
 		parsedURI, err := url.Parse(rawURI)
-        if err != nil {
-            errMessage := "while trying to parse the URL: "+ err.Error()
-            log.Error(errMessage)
-            return
-        }
-        path := strings.Replace(rawURI, parsedURI.EscapedPath(), parsedURI.Path, -1)
+		if err != nil {
+			errMessage := "while trying to parse the URL: " + err.Error()
+			log.Error(errMessage)
+			return
+		}
+		path := strings.Replace(rawURI, parsedURI.EscapedPath(), parsedURI.Path, -1)
 		r.RequestURI = path
 		r.URL.Path = parsedURI.Path
 		next(w, r)
