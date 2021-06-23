@@ -31,6 +31,7 @@ import (
 	"github.com/ODIM-Project/ODIM/svc-managers/mgrcommon"
 	"github.com/ODIM-Project/ODIM/svc-managers/mgrmodel"
 	"github.com/ODIM-Project/ODIM/svc-managers/mgrresponse"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 // GetManagersCollection will get the all the managers(odimra, Plugins, Servers)
@@ -264,42 +265,53 @@ func (e *ExternalInterface) GetManagersResource(req *managersproto.ManagerReques
 	return resp
 }
 
-// VirtualMediaActions
+// VirtualMediaActions is used to perform action on VirtualMedia. For insert and eject of virtual media this function is used
 func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerRequest) response.RPC {
     var resp response.RPC
-    /*// Checking payload for EjectMedia
-    if strings.Contains(req.URL,"VirtualMedia.EjectMedia"){
-        if len(req.RequestBody) != 0{
-            errorMessage := "Request body must be null from odimra"
-		    log.Error(errorMessage)
-		    resp = common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, []interface{}{}, nil)
-		    return resp
-        }
-    }*/
+    var requestBody = req.RequestBody
+    //InsertMedia payload validation
     if strings.Contains(req.URL,"VirtualMedia.InsertMedia"){
-        var vmInsert mgrmodel.VirtualMediaInsert
-        // unmarshalling the volume
-        err := json.Unmarshal(req.RequestBody, &vmInsert)
+        var vmiReq mgrmodel.VirtualMediaInsert
+        // Updating the default values
+        vmiReq.Inserted = true
+        vmiReq.WriteProtected = true
+        err := json.Unmarshal(req.RequestBody, &vmiReq)
         if err != nil {
             errorMessage := "while unmarshaling the virtual media insert request: " + err.Error()
             log.Error(errorMessage)
             resp = common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, []interface{}{}, nil)
             return resp
         }
-        log.Info(vmInsert)
+
 	    // Validating the request JSON properties for case sensitive
-        invalidProperties, err := common.RequestParamsCaseValidator(req.RequestBody, vmInsert)
+        invalidProperties, err := common.RequestParamsCaseValidator(req.RequestBody, vmiReq)
         if err != nil {
-            errMsg := "error while validating request parameters for virtual media insert: " + err.Error()
+            errMsg := "while validating request parameters for virtual media insert: " + err.Error()
             log.Error(errMsg)
             return common.GeneralError(http.StatusInternalServerError, response.InternalError, errMsg, nil, nil)
         } else if invalidProperties != "" {
-            errorMessage := "error: one or more properties given in the request body are not valid, ensure properties are listed in uppercamelcase "
+            errorMessage := "one or more properties given in the request body are not valid, ensure properties are listed in uppercamelcase "
             log.Error(errorMessage)
             response := common.GeneralError(http.StatusBadRequest, response.PropertyUnknown, errorMessage, []interface{}{invalidProperties}, nil)
             return response
         }
+
+        // Check mandatory fields
+        statuscode, statusMessage, messageArgs, err := validateFields(&vmiReq)
+        if err != nil {
+            errorMessage := "request payload validation failed: " + err.Error()
+            log.Error(errorMessage)
+            resp = common.GeneralError(statuscode, statusMessage, errorMessage, messageArgs, nil)
+            return resp
+        }
+        requestBody, err = json.Marshal(vmiReq)
+	    if err != nil {
+		    log.Error("while marshalling the virtual media insert request: " + err.Error())
+		    resp = common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
+		    return resp
+	    }
     }
+    // splitting managerID to get uuid
 	requestData := strings.Split(req.ManagerID, ":")
 	uuid := requestData[0]
 
@@ -315,21 +327,18 @@ func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerReques
 	var contactRequest mgrcommon.PluginContactRequest
 	contactRequest.ContactClient = e.Device.ContactClient
 	contactRequest.Plugin = plugin
-
 	if strings.EqualFold(plugin.PreferredAuthType, "XAuthToken") {
 		token := mgrcommon.GetPluginToken(contactRequest)
 		if token == "" {
 			var errorMessage = "error: Unable to create session with plugin " + plugin.ID
 			return common.GeneralError(http.StatusInternalServerError, response.InternalError, fmt.Sprintf(errorMessage), nil, nil)
 		}
-
 		contactRequest.Token = token
 	} else {
 		contactRequest.BasicAuth = map[string]string{
 			"UserName": plugin.Username,
 			"Password": string(plugin.Password),
 		}
-
 	}
 	decryptedPasswordByte, err := e.Device.DecryptDevicePassword(target.Password)
 	if err != nil {
@@ -340,30 +349,40 @@ func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerReques
 		"ManagerAddress": target.ManagerAddress,
 		"UserName":       target.UserName,
 		"Password":       decryptedPasswordByte,
-		"PostBody":  req.RequestBody,
+		"PostBody":  requestBody,
 	}
-	//replace the uuid:system id with the system to the @odata.id from request url
-	contactRequest.OID = strings.Replace(req.URL, uuid+":"+req.ManagerID, req.ManagerID, -1)
+	//replace the uuid:id with the manager id
+	contactRequest.OID = strings.Replace(req.URL, req.ManagerID, requestData[1]	, -1)
 	contactRequest.HTTPMethodType = http.MethodPost
-	log.Info("kkkkkkkkkkkkkkk1",string(req.RequestBody))
-	target.PostBody = req.RequestBody
-	body, _, getResp, err := mgrcommon.ContactPlugin(contactRequest, "error while getting the details "+contactRequest.OID+": ")
+	//target.PostBody = req.RequestBody
+	body, _, getResp, err := mgrcommon.ContactPlugin(contactRequest, "error while performing virtual media actions "+contactRequest.OID+": ")
 	if err != nil {
-		/*if getResp.StatusCode == http.StatusUnauthorized && strings.EqualFold(contactRequest.Plugin.PreferredAuthType, "XAuthToken") {
-			if body, _, _, err = RetryManagersOperation(contactRequest, "error while getting the details "+contactRequest.OID+": "); err != nil {
-				return "", fmt.Errorf("error while trying to get data from plugin: %v", err)
-			}
-		} else {*/
-			return common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
-		//}
+		resp.StatusCode = getResp.StatusCode
+		json.Unmarshal(body, &resp.Body)
+		resp.Header = map[string]string{"Content-type": "application/json; charset=utf-8"}
+		return resp
 	}
-	resp.StatusCode = getResp.StatusCode
-	//resp.StatusMessage = response.Success
+	resp.Header = map[string]string{"Content-type": "application/json; charset=utf-8"}
+	resp.StatusCode = http.StatusOK
+	resp.StatusMessage = response.Success
 	err = json.Unmarshal(body, &resp.Body)
 	if err != nil {
 		return common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
 	}
-	return resp
+	return resp	
+}
+
+// validateFields will validate the request payload, if any mandatory fields are missing then it will generate an error
+func validateFields(request *mgrmodel.VirtualMediaInsert) (int32, string, []interface{}, error) {
+	validate := validator.New()
+	// if any of the mandatory fields missing in the struct, then it will return an error
+	err := validate.Struct(request)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			return http.StatusBadRequest, response.PropertyMissing, []interface{}{err.Field()}, fmt.Errorf(err.Field() + " field is missing")
+		}
+	}
+	return http.StatusOK, common.OK, []interface{}{}, nil
 }
 
 func (e *ExternalInterface) getPluginManagerResoure(managerID, reqURI string) response.RPC {

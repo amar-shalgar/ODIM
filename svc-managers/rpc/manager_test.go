@@ -267,3 +267,77 @@ func TestGetManagerResourcewithValidtoken(t *testing.T) {
 	assert.Nil(t, err, "The two words should be the same.")
 	assert.Equal(t, int(resp.StatusCode), http.StatusOK, "Status code should be StatusOK.")
 }
+func TestVirtualMediaEjectwithValidtoken(t *testing.T) {
+	common.SetUpMockConfig()
+	var ctx context.Context
+	mgr := new(Managers)
+	mgr.IsAuthorizedRPC = mockIsAuthorized
+	mgr.EI = mockGetExternalInterface()
+
+	req := &managersproto.ManagerRequest{
+		ManagerID:    "uuid:1",
+		SessionToken: "validToken",
+		URL:          "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia",
+		ResourceID:   "1",
+	}
+	var resp = &managersproto.ManagerResponse{}
+	err := mgr.VirtualMediaEject(ctx, req, resp)
+	assert.Nil(t, err, "The two words should be the same.")
+	assert.Equal(t, int(resp.StatusCode), http.StatusOK, "Status code should be StatusOK.")
+}
+func TestVirtualMediaInsertwithValidtoken(t *testing.T) {
+	common.SetUpMockConfig()
+	var ctx context.Context
+	mgr := new(Managers)
+	mgr.IsAuthorizedRPC = mockIsAuthorized
+	mgr.EI = mockGetExternalInterface()
+
+	req := &managersproto.ManagerRequest{
+		ManagerID:    "uuid:1",
+		SessionToken: "validToken",
+		URL:          "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia",
+		ResourceID:   "1",
+		RequestBody:  &managersproto.ManagerRequest{
+					        Image:"http://10.1.0.1/ISO/ubuntu-18.04.4-server-amd64.iso",
+                            Inserted:true,
+                            WriteProtected:true
+				        },
+	}
+	var resp = &managersproto.ManagerResponse{}
+	err := mgr.VirtualMediaInsert(ctx, req, resp)
+	assert.Nil(t, err, "The two words should be the same.")
+	assert.Equal(t, int(resp.StatusCode), http.StatusOK, "Status code should be StatusOK.")
+}
+func TestVirtualMediaEjectInValidtoken(t *testing.T) {
+	common.SetUpMockConfig()
+	var ctx context.Context
+	mgr := new(Managers)
+	mgr.IsAuthorizedRPC = mockIsAuthorized
+	mgr.EI = mockGetExternalInterface()
+	req := &managersproto.ManagerRequest{
+		ManagerID:    "uuid:1",
+		SessionToken: "InvalidToken",
+		RequestBody:  &managersproto.ManagerRequest{
+					        Image:"http://10.1.0.1/ISO/ubuntu-18.04.4-server-amd64.iso",
+                            Inserted:true,
+                            WriteProtected:true
+				        },
+	}
+	var resp = &managersproto.ManagerResponse{}
+	mgr.VirtualMediaEject(ctx, req, resp)
+	assert.Equal(t, int(resp.StatusCode), http.StatusUnauthorized, "Status code should be StatusUnauthorized.")
+}
+func TestVirtualMediaInsertInValidtoken(t *testing.T) {
+	common.SetUpMockConfig()
+	var ctx context.Context
+	mgr := new(Managers)
+	mgr.IsAuthorizedRPC = mockIsAuthorized
+	mgr.EI = mockGetExternalInterface()
+	req := &managersproto.ManagerRequest{
+		ManagerID:    "uuid:1",
+		SessionToken: "InvalidToken",
+	}
+	var resp = &managersproto.ManagerResponse{}
+	mgr.VirtualMediaInsert(ctx, req, resp)
+	assert.Equal(t, int(resp.StatusCode), http.StatusUnauthorized, "Status code should be StatusUnauthorized.")
+}

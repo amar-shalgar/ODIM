@@ -105,12 +105,14 @@ func (m *Managers) GetManagersResource(ctx context.Context, req *managersproto.M
 	return nil
 }
 
-//VirtualMediaInsert defines
+//VirtualMediaInsert defines the operations which handles the RPC request response
+// The function uses IsAuthorized of util-lib to validate the session
+// which is present in the request.
 func (m *Managers) VirtualMediaInsert(ctx context.Context, req *managersproto.ManagerRequest, resp *managersproto.ManagerResponse) error {
 	sessionToken := req.SessionToken
 	authResp := m.IsAuthorizedRPC(sessionToken, []string{common.PrivilegeLogin}, []string{})
 	if authResp.StatusCode != http.StatusOK {
-		log.Error("error while trying to authenticate session")
+		log.Error("while trying to authenticate session")
 		resp.StatusCode = authResp.StatusCode
 		resp.StatusMessage = authResp.StatusMessage
 		resp.Body = generateResponse(authResp.Body)
@@ -125,12 +127,14 @@ func (m *Managers) VirtualMediaInsert(ctx context.Context, req *managersproto.Ma
 	return nil
 }
 
-//VirtualMediaEject defines
+//VirtualMediaEject defines the operations which handles the RPC request response
+// The function uses IsAuthorized of util-lib to validate the session
+// which is present in the request.
 func (m *Managers) VirtualMediaEject(ctx context.Context, req *managersproto.ManagerRequest, resp *managersproto.ManagerResponse) error {
 	sessionToken := req.SessionToken
 	authResp := m.IsAuthorizedRPC(sessionToken, []string{common.PrivilegeLogin}, []string{})
 	if authResp.StatusCode != http.StatusOK {
-		log.Error("error while trying to authenticate session")
+		log.Error("while trying to authenticate session")
 		resp.StatusCode = authResp.StatusCode
 		resp.StatusMessage = authResp.StatusMessage
 		resp.Body = generateResponse(authResp.Body)

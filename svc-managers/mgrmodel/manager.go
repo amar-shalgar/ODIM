@@ -101,15 +101,15 @@ type RAManager struct {
 	State           string `json:"State"`
 }
 
-// VirtualMediaInsert
+// VirtualMediaInsert struct is to store the insert virtual media request payload
 type VirtualMediaInsert struct {
-	Image string `json:"Image"`
+	Image string `json:"Image" validate:"required"`
 	Inserted bool `json:"Inserted"`
-	Password string `json:"Password"`
-	TransferMethod string `json:"TransferMethod"`
-	TransferProtocolType string `json:"TransferProtocolType"`
-	UserName string `json:"UserName"`
 	WriteProtected bool `json:WriteProtected`
+	Password string `json:"Password,omitempty"`
+	TransferMethod string `json:"TransferMethod,omitempty"`
+	TransferProtocolType string `json:"TransferProtocolType,omitempty"`
+	UserName string `json:"UserName,omitempty"`
 }
 
 //GetResource fetches a resource from database using table and key

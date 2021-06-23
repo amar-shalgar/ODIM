@@ -127,7 +127,10 @@ func (mgr *ManagersRPCs) GetManagersResource(ctx iris.Context) {
 	ctx.Write(resp.Body)
 }
 
-// VirtualMediaInsert defines
+// VirtualMediaInsert defines the Insert virtual media iris handler
+// The method extract the session token,uuid and request url and creates the RPC request.
+// After the RPC call the method will feed the response to the iris
+// and gives out a proper response.
 func (mgr *ManagersRPCs) VirtualMediaInsert(ctx iris.Context) {
     var reqIn interface{}
 	err := ctx.ReadJSON(&reqIn)
@@ -169,7 +172,7 @@ func (mgr *ManagersRPCs) VirtualMediaInsert(ctx iris.Context) {
 		errorMessage := "RPC error:" + err.Error()
 		log.Error(errorMessage)
 		response := common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil)
-		ctx.StatusCode(http.StatusInternalServerError) // TODO: add error headers
+		ctx.StatusCode(http.StatusInternalServerError)
 		ctx.JSON(&response.Body)
 		return
 	}
@@ -179,7 +182,10 @@ func (mgr *ManagersRPCs) VirtualMediaInsert(ctx iris.Context) {
 	ctx.Write(resp.Body)
 }
 
-// VirtualMediaEject defines
+// VirtualMediaEject defines the eject virtual media iris handler
+// The method extract the session token,uuid and request url and creates the RPC request.
+// After the RPC call the method will feed the response to the iris
+// and gives out a proper response.
 func (mgr *ManagersRPCs) VirtualMediaEject(ctx iris.Context) {
 	req := managersproto.ManagerRequest{
 		SessionToken: ctx.Request().Header.Get("X-Auth-Token"),
