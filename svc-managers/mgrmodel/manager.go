@@ -101,6 +101,17 @@ type RAManager struct {
 	State           string `json:"State"`
 }
 
+// VirtualMediaInsert
+type VirtualMediaInsert struct {
+	Image string `json:"Image"`
+	Inserted bool `json:"Inserted"`
+	Password string `json:"Password"`
+	TransferMethod string `json:"TransferMethod"`
+	TransferProtocolType string `json:"TransferProtocolType"`
+	UserName string `json:"UserName"`
+	WriteProtected bool `json:WriteProtected`
+}
+
 //GetResource fetches a resource from database using table and key
 func GetResource(Table, key string) (string, *errors.Error) {
 	conn, err := common.GetDBConnection(common.InMemory)

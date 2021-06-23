@@ -52,3 +52,13 @@ func GetManagersResource(req managersproto.ManagerRequest) (*managersproto.Manag
 	}
 	return resp, nil
 }
+
+// GetManagersResource will do the rpc calls for the svc-managers
+func VirtualMediaActions(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error) {
+	asService := managersproto.NewManagersService(services.Managers, services.Service.Client())
+	resp, err := asService.VirtualMediaActions(context.TODO(), &req)
+	if err != nil {
+		return nil, fmt.Errorf("error: RPC error: %v", err)
+	}
+	return resp, nil
+}

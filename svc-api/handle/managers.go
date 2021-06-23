@@ -18,6 +18,7 @@ package handle
 import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
+    "encoding/json"
 
 	"github.com/ODIM-Project/ODIM/lib-utilities/common"
 	managersproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/managers"
@@ -30,6 +31,7 @@ type ManagersRPCs struct {
 	GetManagersCollectionRPC func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 	GetManagersRPC           func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 	GetManagersResourceRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
+	VirtualMediaActionsRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 }
 
 //GetManagersCollection fetches all managers
@@ -110,6 +112,58 @@ func (mgr *ManagersRPCs) GetManagersResource(ctx iris.Context) {
 		return
 	}
 	resp, err := mgr.GetManagersResourceRPC(req)
+	if err != nil {
+		errorMessage := "error:  RPC error:" + err.Error()
+		log.Error(errorMessage)
+		response := common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil)
+		ctx.StatusCode(http.StatusInternalServerError) // TODO: add error headers
+		ctx.JSON(&response.Body)
+		return
+	}
+
+	common.SetResponseHeader(ctx, resp.Header)
+	ctx.StatusCode(int(resp.StatusCode))
+	ctx.Write(resp.Body)
+}
+
+// VirtualMediaActions defines
+func (mgr *ManagersRPCs) VirtualMediaActions(ctx iris.Context) {
+    var reqIn interface{}
+	err := ctx.ReadJSON(&reqIn)
+	if err != nil {
+		errorMessage := "while trying to get JSON body from the virtual media actions request body: " + err.Error()
+		log.Error(errorMessage)
+		response := common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, nil, nil)
+		ctx.StatusCode(http.StatusBadRequest)
+		ctx.JSON(&response.Body)
+		return
+	}
+	request, err := json.Marshal(reqIn)
+	if err != nil {
+		errorMessage := "error while trying to create JSON request body: " + err.Error()
+		log.Error(errorMessage)
+		response := common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil)
+		ctx.StatusCode(http.StatusInternalServerError)
+		ctx.JSON(&response.Body)
+		return
+	}
+
+	req := managersproto.ManagerRequest{
+		SessionToken: ctx.Request().Header.Get("X-Auth-Token"),
+		ManagerID:    ctx.Params().Get("id"),
+		ResourceID:   ctx.Params().Get("rid"),
+		URL:          ctx.Request().RequestURI,
+		RequestBody:  request,
+	}
+	if req.SessionToken == "" {
+		errorMessage := "error: no X-Auth-Token found in request header"
+		log.Error(errorMessage)
+		response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
+		ctx.StatusCode(http.StatusUnauthorized) // TODO: add error headers
+		ctx.JSON(&response.Body)
+		return
+	}
+	resp, err := mgr.VirtualMediaActionsRPC(req)
 	if err != nil {
 		errorMessage := "error:  RPC error:" + err.Error()
 		log.Error(errorMessage)
