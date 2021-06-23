@@ -124,6 +124,8 @@ func Router() *iris.Application {
 		GetManagersCollectionRPC: rpc.GetManagersCollection,
 		GetManagersRPC:           rpc.GetManagers,
 		GetManagersResourceRPC:   rpc.GetManagersResource,
+		VirtualMediaInsertRPC:   rpc.VirtualMediaInsert,
+		VirtualMediaEjectRPC:   rpc.VirtualMediaEject,
 	}
 
 	update := handle.UpdateRPCs{
@@ -464,8 +466,8 @@ func Router() *iris.Application {
 	managers.Get("/{id}/SerialInterface/{rid}", manager.GetManagersResource)
 	managers.Get("/{id}/VirtualMedia", manager.GetManagersResource)
 	managers.Get("/{id}/VirtualMedia/{rid}", manager.GetManagersResource)
-	managers.Post("/{id}/VirtualMedia/{rid}/Actions/VirtualMedia.EjectMedia", manager.VirtualMediaActions)
-	managers.Post("/{id}/VirtualMedia/{rid}/Actions/VirtualMedia.InsertMedia", manager.VirtualMediaActions)
+	managers.Post("/{id}/VirtualMedia/{rid}/Actions/VirtualMedia.EjectMedia", manager.VirtualMediaEject)
+	managers.Post("/{id}/VirtualMedia/{rid}/Actions/VirtualMedia.InsertMedia", manager.VirtualMediaInsert)
 	managers.Get("/{id}/LogServices", manager.GetManagersResource)
 	managers.Get("/{id}/LogServices/{rid}", manager.GetManagersResource)
 	managers.Get("/{id}/LogServices/{rid}/Entries", manager.GetManagersResource)

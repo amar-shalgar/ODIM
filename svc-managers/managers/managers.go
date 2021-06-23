@@ -264,6 +264,108 @@ func (e *ExternalInterface) GetManagersResource(req *managersproto.ManagerReques
 	return resp
 }
 
+// VirtualMediaActions
+func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerRequest) response.RPC {
+    var resp response.RPC
+    /*// Checking payload for EjectMedia
+    if strings.Contains(req.URL,"VirtualMedia.EjectMedia"){
+        if len(req.RequestBody) != 0{
+            errorMessage := "Request body must be null from odimra"
+		    log.Error(errorMessage)
+		    resp = common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, []interface{}{}, nil)
+		    return resp
+        }
+    }*/
+    if strings.Contains(req.URL,"VirtualMedia.InsertMedia"){
+        var vmInsert mgrmodel.VirtualMediaInsert
+        // unmarshalling the volume
+        err := json.Unmarshal(req.RequestBody, &vmInsert)
+        if err != nil {
+            errorMessage := "while unmarshaling the virtual media insert request: " + err.Error()
+            log.Error(errorMessage)
+            resp = common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, []interface{}{}, nil)
+            return resp
+        }
+        log.Info(vmInsert)
+	    // Validating the request JSON properties for case sensitive
+        invalidProperties, err := common.RequestParamsCaseValidator(req.RequestBody, vmInsert)
+        if err != nil {
+            errMsg := "error while validating request parameters for virtual media insert: " + err.Error()
+            log.Error(errMsg)
+            return common.GeneralError(http.StatusInternalServerError, response.InternalError, errMsg, nil, nil)
+        } else if invalidProperties != "" {
+            errorMessage := "error: one or more properties given in the request body are not valid, ensure properties are listed in uppercamelcase "
+            log.Error(errorMessage)
+            response := common.GeneralError(http.StatusBadRequest, response.PropertyUnknown, errorMessage, []interface{}{invalidProperties}, nil)
+            return response
+        }
+    }
+	requestData := strings.Split(req.ManagerID, ":")
+	uuid := requestData[0]
+
+    target, gerr := mgrmodel.GetTarget(uuid)
+	if gerr != nil {
+		return common.GeneralError(http.StatusInternalServerError, response.InternalError, gerr.Error(), nil, nil)
+	}
+	// Get the Plugin info
+	plugin, gerr := mgrmodel.GetPluginData(target.PluginID)
+	if gerr != nil {
+		return common.GeneralError(http.StatusInternalServerError, response.InternalError, gerr.Error(), nil, nil)
+	}
+	var contactRequest mgrcommon.PluginContactRequest
+	contactRequest.ContactClient = e.Device.ContactClient
+	contactRequest.Plugin = plugin
+
+	if strings.EqualFold(plugin.PreferredAuthType, "XAuthToken") {
+		token := mgrcommon.GetPluginToken(contactRequest)
+		if token == "" {
+			var errorMessage = "error: Unable to create session with plugin " + plugin.ID
+			return common.GeneralError(http.StatusInternalServerError, response.InternalError, fmt.Sprintf(errorMessage), nil, nil)
+		}
+
+		contactRequest.Token = token
+	} else {
+		contactRequest.BasicAuth = map[string]string{
+			"UserName": plugin.Username,
+			"Password": string(plugin.Password),
+		}
+
+	}
+	decryptedPasswordByte, err := e.Device.DecryptDevicePassword(target.Password)
+	if err != nil {
+		errorMessage := "error while trying to decrypt device password: " + err.Error()
+		return common.GeneralError(http.StatusInternalServerError, response.InternalError, fmt.Sprintf(errorMessage), nil, nil)
+	}
+	contactRequest.DeviceInfo = map[string]interface{}{
+		"ManagerAddress": target.ManagerAddress,
+		"UserName":       target.UserName,
+		"Password":       decryptedPasswordByte,
+		"PostBody":  req.RequestBody,
+	}
+	//replace the uuid:system id with the system to the @odata.id from request url
+	contactRequest.OID = strings.Replace(req.URL, uuid+":"+req.ManagerID, req.ManagerID, -1)
+	contactRequest.HTTPMethodType = http.MethodPost
+	log.Info("kkkkkkkkkkkkkkk1",string(req.RequestBody))
+	target.PostBody = req.RequestBody
+	body, _, getResp, err := mgrcommon.ContactPlugin(contactRequest, "error while getting the details "+contactRequest.OID+": ")
+	if err != nil {
+		/*if getResp.StatusCode == http.StatusUnauthorized && strings.EqualFold(contactRequest.Plugin.PreferredAuthType, "XAuthToken") {
+			if body, _, _, err = RetryManagersOperation(contactRequest, "error while getting the details "+contactRequest.OID+": "); err != nil {
+				return "", fmt.Errorf("error while trying to get data from plugin: %v", err)
+			}
+		} else {*/
+			return common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
+		//}
+	}
+	resp.StatusCode = getResp.StatusCode
+	//resp.StatusMessage = response.Success
+	err = json.Unmarshal(body, &resp.Body)
+	if err != nil {
+		return common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
+	}
+	return resp
+}
+
 func (e *ExternalInterface) getPluginManagerResoure(managerID, reqURI string) response.RPC {
 	var resp response.RPC
 	data, dberr := e.DB.GetManagerByURL("/redfish/v1/Managers/" + managerID)
@@ -341,7 +443,7 @@ func (e *ExternalInterface) getPluginManagerResoure(managerID, reqURI string) re
 func fillResponse(body []byte) response.RPC {
 	var resp response.RPC
 	data := string(body)
-	//replacing the resposne with north bound translation URL
+	//replacing the response with north bound translation URL
 	for key, value := range config.Data.URLTranslation.NorthBoundURL {
 		data = strings.Replace(data, key, value, -1)
 	}

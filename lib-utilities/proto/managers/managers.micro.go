@@ -37,7 +37,8 @@ type ManagersService interface {
 	GetManagersCollection(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error)
 	GetManager(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error)
 	GetManagersResource(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error)
-	VirtualMediaActions(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error)
+	VirtualMediaInsert(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error)
+	VirtualMediaEject(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error)
 }
 
 type managersService struct {
@@ -88,8 +89,18 @@ func (c *managersService) GetManagersResource(ctx context.Context, in *ManagerRe
 	return out, nil
 }
 
-func (c *managersService) VirtualMediaActions(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error) {
-	req := c.c.NewRequest(c.name, "Managers.VirtualMediaActions", in)
+func (c *managersService) VirtualMediaInsert(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error) {
+	req := c.c.NewRequest(c.name, "Managers.VirtualMediaInsert", in)
+	out := new(ManagerResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managersService) VirtualMediaEject(ctx context.Context, in *ManagerRequest, opts ...client.CallOption) (*ManagerResponse, error) {
+	req := c.c.NewRequest(c.name, "Managers.VirtualMediaEject", in)
 	out := new(ManagerResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -104,7 +115,8 @@ type ManagersHandler interface {
 	GetManagersCollection(context.Context, *ManagerRequest, *ManagerResponse) error
 	GetManager(context.Context, *ManagerRequest, *ManagerResponse) error
 	GetManagersResource(context.Context, *ManagerRequest, *ManagerResponse) error
-	VirtualMediaActions(context.Context, *ManagerRequest, *ManagerResponse) error
+	VirtualMediaInsert(context.Context, *ManagerRequest, *ManagerResponse) error
+	VirtualMediaEject(context.Context, *ManagerRequest, *ManagerResponse) error
 }
 
 func RegisterManagersHandler(s server.Server, hdlr ManagersHandler, opts ...server.HandlerOption) error {
@@ -112,7 +124,8 @@ func RegisterManagersHandler(s server.Server, hdlr ManagersHandler, opts ...serv
 		GetManagersCollection(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error
 		GetManager(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error
 		GetManagersResource(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error
-		VirtualMediaActions(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error
+		VirtualMediaInsert(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error
+		VirtualMediaEject(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error
 	}
 	type Managers struct {
 		managers
@@ -137,6 +150,10 @@ func (h *managersHandler) GetManagersResource(ctx context.Context, in *ManagerRe
 	return h.ManagersHandler.GetManagersResource(ctx, in, out)
 }
 
-func (h *managersHandler) VirtualMediaActions(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error {
-	return h.ManagersHandler.VirtualMediaActions(ctx, in, out)
+func (h *managersHandler) VirtualMediaInsert(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error {
+	return h.ManagersHandler.VirtualMediaInsert(ctx, in, out)
+}
+
+func (h *managersHandler) VirtualMediaEject(ctx context.Context, in *ManagerRequest, out *ManagerResponse) error {
+	return h.ManagersHandler.VirtualMediaEject(ctx, in, out)
 }

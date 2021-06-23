@@ -105,8 +105,28 @@ func (m *Managers) GetManagersResource(ctx context.Context, req *managersproto.M
 	return nil
 }
 
-//VirtualMediaActions defines
-func (m *Managers) VirtualMediaActions(ctx context.Context, req *managersproto.ManagerRequest, resp *managersproto.ManagerResponse) error {
+//VirtualMediaInsert defines
+func (m *Managers) VirtualMediaInsert(ctx context.Context, req *managersproto.ManagerRequest, resp *managersproto.ManagerResponse) error {
+	sessionToken := req.SessionToken
+	authResp := m.IsAuthorizedRPC(sessionToken, []string{common.PrivilegeLogin}, []string{})
+	if authResp.StatusCode != http.StatusOK {
+		log.Error("error while trying to authenticate session")
+		resp.StatusCode = authResp.StatusCode
+		resp.StatusMessage = authResp.StatusMessage
+		resp.Body = generateResponse(authResp.Body)
+		resp.Header = authResp.Header
+		return nil
+	}
+	data := m.EI.VirtualMediaActions(req)
+	resp.Header = data.Header
+	resp.StatusCode = data.StatusCode
+	resp.StatusMessage = data.StatusMessage
+	resp.Body = generateResponse(data.Body)
+	return nil
+}
+
+//VirtualMediaEject defines
+func (m *Managers) VirtualMediaEject(ctx context.Context, req *managersproto.ManagerRequest, resp *managersproto.ManagerResponse) error {
 	sessionToken := req.SessionToken
 	authResp := m.IsAuthorizedRPC(sessionToken, []string{common.PrivilegeLogin}, []string{})
 	if authResp.StatusCode != http.StatusOK {

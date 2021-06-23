@@ -31,7 +31,8 @@ type ManagersRPCs struct {
 	GetManagersCollectionRPC func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 	GetManagersRPC           func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 	GetManagersResourceRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
-	VirtualMediaActionsRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
+	VirtualMediaInsertRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
+	VirtualMediaEjectRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 }
 
 //GetManagersCollection fetches all managers
@@ -126,8 +127,8 @@ func (mgr *ManagersRPCs) GetManagersResource(ctx iris.Context) {
 	ctx.Write(resp.Body)
 }
 
-// VirtualMediaActions defines
-func (mgr *ManagersRPCs) VirtualMediaActions(ctx iris.Context) {
+// VirtualMediaInsert defines
+func (mgr *ManagersRPCs) VirtualMediaInsert(ctx iris.Context) {
     var reqIn interface{}
 	err := ctx.ReadJSON(&reqIn)
 	if err != nil {
@@ -140,7 +141,7 @@ func (mgr *ManagersRPCs) VirtualMediaActions(ctx iris.Context) {
 	}
 	request, err := json.Marshal(reqIn)
 	if err != nil {
-		errorMessage := "error while trying to create JSON request body: " + err.Error()
+		errorMessage := "while trying to create JSON request body: " + err.Error()
 		log.Error(errorMessage)
 		response := common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil)
 		ctx.StatusCode(http.StatusInternalServerError)
@@ -156,19 +157,50 @@ func (mgr *ManagersRPCs) VirtualMediaActions(ctx iris.Context) {
 		RequestBody:  request,
 	}
 	if req.SessionToken == "" {
-		errorMessage := "error: no X-Auth-Token found in request header"
+		errorMessage := "no X-Auth-Token found in request header"
+		log.Error(errorMessage)
+		response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
+		ctx.StatusCode(http.StatusUnauthorized)
+		ctx.JSON(&response.Body)
+		return
+	}
+	resp, err := mgr.VirtualMediaInsertRPC(req)
+	if err != nil {
+		errorMessage := "RPC error:" + err.Error()
+		log.Error(errorMessage)
+		response := common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil)
+		ctx.StatusCode(http.StatusInternalServerError) // TODO: add error headers
+		ctx.JSON(&response.Body)
+		return
+	}
+
+	common.SetResponseHeader(ctx, resp.Header)
+	ctx.StatusCode(int(resp.StatusCode))
+	ctx.Write(resp.Body)
+}
+
+// VirtualMediaEject defines
+func (mgr *ManagersRPCs) VirtualMediaEject(ctx iris.Context) {
+	req := managersproto.ManagerRequest{
+		SessionToken: ctx.Request().Header.Get("X-Auth-Token"),
+		ManagerID:    ctx.Params().Get("id"),
+		ResourceID:   ctx.Params().Get("rid"),
+		URL:          ctx.Request().RequestURI,
+	}
+	if req.SessionToken == "" {
+		errorMessage := "no X-Auth-Token found in request header"
 		log.Error(errorMessage)
 		response := common.GeneralError(http.StatusUnauthorized, response.NoValidSession, errorMessage, nil, nil)
 		ctx.StatusCode(http.StatusUnauthorized) // TODO: add error headers
 		ctx.JSON(&response.Body)
 		return
 	}
-	resp, err := mgr.VirtualMediaActionsRPC(req)
+	resp, err := mgr.VirtualMediaEjectRPC(req)
 	if err != nil {
-		errorMessage := "error:  RPC error:" + err.Error()
+		errorMessage := "RPC error:" + err.Error()
 		log.Error(errorMessage)
 		response := common.GeneralError(http.StatusInternalServerError, response.InternalError, errorMessage, nil, nil)
-		ctx.StatusCode(http.StatusInternalServerError) // TODO: add error headers
+		ctx.StatusCode(http.StatusInternalServerError)
 		ctx.JSON(&response.Body)
 		return
 	}
