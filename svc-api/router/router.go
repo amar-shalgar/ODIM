@@ -124,8 +124,8 @@ func Router() *iris.Application {
 		GetManagersCollectionRPC: rpc.GetManagersCollection,
 		GetManagersRPC:           rpc.GetManagers,
 		GetManagersResourceRPC:   rpc.GetManagersResource,
-		VirtualMediaInsertRPC:   rpc.VirtualMediaInsert,
-		VirtualMediaEjectRPC:   rpc.VirtualMediaEject,
+		VirtualMediaInsertRPC:    rpc.VirtualMediaInsert,
+		VirtualMediaEjectRPC:     rpc.VirtualMediaEject,
 	}
 
 	update := handle.UpdateRPCs{

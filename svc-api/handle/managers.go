@@ -16,9 +16,9 @@
 package handle
 
 import (
+	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-    "encoding/json"
 
 	"github.com/ODIM-Project/ODIM/lib-utilities/common"
 	managersproto "github.com/ODIM-Project/ODIM/lib-utilities/proto/managers"
@@ -31,8 +31,8 @@ type ManagersRPCs struct {
 	GetManagersCollectionRPC func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 	GetManagersRPC           func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 	GetManagersResourceRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
-	VirtualMediaInsertRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
-	VirtualMediaEjectRPC   func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
+	VirtualMediaInsertRPC    func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
+	VirtualMediaEjectRPC     func(req managersproto.ManagerRequest) (*managersproto.ManagerResponse, error)
 }
 
 //GetManagersCollection fetches all managers
@@ -132,7 +132,7 @@ func (mgr *ManagersRPCs) GetManagersResource(ctx iris.Context) {
 // After the RPC call the method will feed the response to the iris
 // and gives out a proper response.
 func (mgr *ManagersRPCs) VirtualMediaInsert(ctx iris.Context) {
-    var reqIn interface{}
+	var reqIn interface{}
 	err := ctx.ReadJSON(&reqIn)
 	if err != nil {
 		errorMessage := "while trying to get JSON body from the virtual media actions request body: " + err.Error()
