@@ -215,39 +215,27 @@ func TestGetPluginManagerResourceInvalidPluginSessions(t *testing.T) {
 
 }
 
-func TestVirtualMediaActionswithValidURL(t *testing.T) {
+func TestVirtualMediaActionsResource(t *testing.T) {
+	mgrcommon.Token.Tokens = make(map[string]string)
+
 	config.SetUpMockConfig(t)
 	req := &managersproto.ManagerRequest{
 		ManagerID: "uuid:1",
-		URL:       "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia",
 		ResourceID: "1",
-		RequestBody:  &managersproto.ManagerRequest{
-					        Image:"http://10.1.0.1/ISO/ubuntu-18.04.4-server-amd64.iso",
-                            Inserted:true,
-                            WriteProtected:true
-				        },
+		URL:       "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia",
+		RequestBody: []byte(`{"Image":"http://10.1.1.1/ISO",
+							"WriteProtected":true,
+							"Inserted":true}`),
 	}
 	e := mockGetExternalInterface()
 	response := e.VirtualMediaActions(req)
 	assert.Equal(t, http.StatusOK, int(response.StatusCode), "Status code should be StatusOK.")
 
 	req = &managersproto.ManagerRequest{
-		ManagerID:  "uuid:1",
+		ManagerID:  "uuid1:1",
 		ResourceID: "1",
 		URL:        "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia",
 	}
 	response = e.VirtualMediaActions(req)
 	assert.Equal(t, http.StatusOK, int(response.StatusCode), "Status code should be StatusOK.")
-
-}
-
-func TestVirtualMediaActionswithInvalidURL(t *testing.T) {
-	config.SetUpMockConfig(t)
-	req := &managersproto.ManagerRequest{
-		ManagerID: "uuid1:1",
-		URL:       "/redfish/v1/Managers/uuid1:1/Action",
-	}
-	e := mockGetExternalInterface()
-	response := e.VirtualMediaActions(req)
-	assert.Equal(t, http.StatusNotFound, int(response.StatusCode), "Status code should be StatusNotFound.")
 }

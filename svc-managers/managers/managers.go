@@ -313,63 +313,11 @@ func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerReques
     }
     // splitting managerID to get uuid
 	requestData := strings.Split(req.ManagerID, ":")
+	log.Info(requestData)
 	uuid := requestData[0]
-
-    target, gerr := mgrmodel.GetTarget(uuid)
-	if gerr != nil {
-		return common.GeneralError(http.StatusInternalServerError, response.InternalError, gerr.Error(), nil, nil)
-	}
-	// Get the Plugin info
-	plugin, gerr := mgrmodel.GetPluginData(target.PluginID)
-	if gerr != nil {
-		return common.GeneralError(http.StatusInternalServerError, response.InternalError, gerr.Error(), nil, nil)
-	}
-	var contactRequest mgrcommon.PluginContactRequest
-	contactRequest.ContactClient = e.Device.ContactClient
-	contactRequest.Plugin = plugin
-	if strings.EqualFold(plugin.PreferredAuthType, "XAuthToken") {
-		token := mgrcommon.GetPluginToken(contactRequest)
-		if token == "" {
-			var errorMessage = "error: Unable to create session with plugin " + plugin.ID
-			return common.GeneralError(http.StatusInternalServerError, response.InternalError, fmt.Sprintf(errorMessage), nil, nil)
-		}
-		contactRequest.Token = token
-	} else {
-		contactRequest.BasicAuth = map[string]string{
-			"UserName": plugin.Username,
-			"Password": string(plugin.Password),
-		}
-	}
-	decryptedPasswordByte, err := e.Device.DecryptDevicePassword(target.Password)
-	if err != nil {
-		errorMessage := "error while trying to decrypt device password: " + err.Error()
-		return common.GeneralError(http.StatusInternalServerError, response.InternalError, fmt.Sprintf(errorMessage), nil, nil)
-	}
-	contactRequest.DeviceInfo = map[string]interface{}{
-		"ManagerAddress": target.ManagerAddress,
-		"UserName":       target.UserName,
-		"Password":       decryptedPasswordByte,
-		"PostBody":  requestBody,
-	}
-	//replace the uuid:id with the manager id
-	contactRequest.OID = strings.Replace(req.URL, req.ManagerID, requestData[1]	, -1)
-	contactRequest.HTTPMethodType = http.MethodPost
-	//target.PostBody = req.RequestBody
-	body, _, getResp, err := mgrcommon.ContactPlugin(contactRequest, "error while performing virtual media actions "+contactRequest.OID+": ")
-	if err != nil {
-		resp.StatusCode = getResp.StatusCode
-		json.Unmarshal(body, &resp.Body)
-		resp.Header = map[string]string{"Content-type": "application/json; charset=utf-8"}
-		return resp
-	}
-	resp.Header = map[string]string{"Content-type": "application/json; charset=utf-8"}
-	resp.StatusCode = http.StatusOK
-	resp.StatusMessage = response.Success
-	err = json.Unmarshal(body, &resp.Body)
-	if err != nil {
-		return common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
-	}
-	return resp	
+	log.Info(req.URL, uuid, string(requestBody))
+    resp = e.deviceCommunication(req.URL, uuid, requestData[1], http.MethodPost, requestBody)
+    return resp
 }
 
 // validateFields will validate the request payload, if any mandatory fields are missing then it will generate an error
@@ -498,4 +446,17 @@ func (e *ExternalInterface) getResourceInfoFromDevice(reqURL, uuid, systemID str
 	}
 	return e.Device.GetDeviceInfo(getDeviceInfoRequest)
 
+}
+
+func (e *ExternalInterface) deviceCommunication(reqURL, uuid, systemID, httpMethod string, requestBody []byte) response.RPC {
+	var deviceInfoRequest = mgrcommon.ResourceInfoRequest{
+		URL:                   reqURL,
+		UUID:                  uuid,
+		SystemID:              systemID,
+		ContactClient:         e.Device.ContactClient,
+		DecryptDevicePassword: e.Device.DecryptDevicePassword,
+		HTTPMethod: httpMethod,
+		RequestBody: requestBody,
+	}
+	return e.Device.DeviceRequest(deviceInfoRequest)
 }
