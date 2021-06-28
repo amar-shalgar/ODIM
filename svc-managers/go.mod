@@ -8,6 +8,7 @@ require (
 	github.com/ODIM-Project/ODIM/lib-utilities v0.0.0-20210622112605-b6361e8ba368
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.5.1
+	gopkg.in/go-playground/validator.v9 v9.30.0
 )
 
 replace (

@@ -220,9 +220,9 @@ func TestVirtualMediaActionsResource(t *testing.T) {
 
 	config.SetUpMockConfig(t)
 	req := &managersproto.ManagerRequest{
-		ManagerID: "uuid:1",
+		ManagerID:  "uuid:1",
 		ResourceID: "1",
-		URL:       "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia",
+		URL:        "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia",
 		RequestBody: []byte(`{"Image":"http://10.1.1.1/ISO",
 							"WriteProtected":true,
 							"Inserted":true}`),

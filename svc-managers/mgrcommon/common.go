@@ -55,8 +55,8 @@ type ResourceInfoRequest struct {
 	SystemID              string
 	ContactClient         func(string, string, string, string, interface{}, map[string]string) (*http.Response, error)
 	DecryptDevicePassword func([]byte) ([]byte, error)
-	HTTPMethod           string
-	RequestBody         []byte
+	HTTPMethod            string
+	RequestBody           []byte
 }
 
 // PluginToken interface to hold the token
@@ -87,9 +87,10 @@ func (p *PluginToken) GetToken(pluginID string) string {
 	return p.Tokens[pluginID]
 }
 
+// DeviceCommunication to connect with device with all the params
 func DeviceCommunication(req ResourceInfoRequest) response.RPC {
-    var resp response.RPC
-    target, gerr := mgrmodel.GetTarget(req.UUID)
+	var resp response.RPC
+	target, gerr := mgrmodel.GetTarget(req.UUID)
 	if gerr != nil {
 		return common.GeneralError(http.StatusInternalServerError, response.InternalError, gerr.Error(), nil, nil)
 	}
@@ -101,7 +102,7 @@ func DeviceCommunication(req ResourceInfoRequest) response.RPC {
 	var contactRequest PluginContactRequest
 	contactRequest.ContactClient = req.ContactClient
 	contactRequest.Plugin = plugin
-    if strings.EqualFold(plugin.PreferredAuthType, "XAuthToken") {
+	if strings.EqualFold(plugin.PreferredAuthType, "XAuthToken") {
 		token := GetPluginToken(contactRequest)
 		if token == "" {
 			var errorMessage = "error: Unable to create session with plugin " + plugin.ID
@@ -123,7 +124,7 @@ func DeviceCommunication(req ResourceInfoRequest) response.RPC {
 		"ManagerAddress": target.ManagerAddress,
 		"UserName":       target.UserName,
 		"Password":       decryptedPasswordByte,
-		"PostBody":  req.RequestBody,
+		"PostBody":       req.RequestBody,
 	}
 	//replace the uuid:id with the manager id
 	contactRequest.OID = strings.Replace(req.URL, req.UUID+":"+req.SystemID, req.SystemID, -1)

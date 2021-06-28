@@ -297,7 +297,7 @@ func TestVirtualMediaEject(t *testing.T) {
 	mgr := new(Managers)
 	mgr.IsAuthorizedRPC = mockIsAuthorized
 	mgr.EI = mockGetExternalInterface()
-    req := &managersproto.ManagerRequest{
+	req := &managersproto.ManagerRequest{
 		ManagerID:    "uuid:1",
 		SessionToken: "validToken",
 		URL:          "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia",
@@ -333,7 +333,7 @@ func TestVirtualMediaInsert(t *testing.T) {
 		SessionToken: "validToken",
 		URL:          "/redfish/v1/Managers/uuid:1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia",
 		ResourceID:   "1",
-		RequestBody:  []byte(`{"Image":"http://10.1.0.1/ISO/ubuntu-18.04.4-server-amd64.iso",
+		RequestBody: []byte(`{"Image":"http://10.1.0.1/ISO/ubuntu-18.04.4-server-amd64.iso",
 										"Inserted":true,
 										"WriteProtected":true
 										}`),

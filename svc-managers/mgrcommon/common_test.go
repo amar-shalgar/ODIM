@@ -114,13 +114,13 @@ func mockContactClient(url, method, token string, odataID string, body interface
 			Body:       ioutil.NopCloser(bytes.NewBufferString(body)),
 		}, nil
 	} else if url == "https://localhost:9091/ODIM/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia" {
-	    body := `{"data": "Success"}`
+		body := `{"data": "Success"}`
 		return &http.Response{
 			StatusCode: http.StatusOK,
 			Body:       ioutil.NopCloser(bytes.NewBufferString(body)),
 		}, nil
 	} else if url == "https://localhost:9091/ODIM/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia" {
-	    body := `{"data": "Success"}`
+		body := `{"data": "Success"}`
 		return &http.Response{
 			StatusCode: http.StatusOK,
 			Body:       ioutil.NopCloser(bytes.NewBufferString(body)),
@@ -306,8 +306,8 @@ func TestDeviceCommunication(t *testing.T) {
 		SystemID:              "1",
 		ContactClient:         mockContactClient,
 		DecryptDevicePassword: stubDevicePassword,
-		HTTPMethod: http.MethodPost,
-	    RequestBody:   []byte(`{"Image":"http://10.1.1.1/ISO"}`),
+		HTTPMethod:            http.MethodPost,
+		RequestBody:           []byte(`{"Image":"http://10.1.1.1/ISO"}`),
 	}
 	response := DeviceCommunication(req)
 	assert.Equal(t, http.StatusOK, int(response.StatusCode), "Status code should be StatusOK.")
@@ -318,8 +318,8 @@ func TestDeviceCommunication(t *testing.T) {
 		SystemID:              "1",
 		ContactClient:         mockContactClient,
 		DecryptDevicePassword: stubDevicePassword,
-		HTTPMethod: http.MethodPost,
-	    RequestBody:   []byte(`{"Image":"http://10.1.1.1/ISO"}`),
+		HTTPMethod:            http.MethodPost,
+		RequestBody:           []byte(`{"Image":"http://10.1.1.1/ISO"}`),
 	}
 	response = DeviceCommunication(req)
 	assert.Equal(t, http.StatusOK, int(response.StatusCode), "Status code should be StatusOK.")

@@ -267,57 +267,57 @@ func (e *ExternalInterface) GetManagersResource(req *managersproto.ManagerReques
 
 // VirtualMediaActions is used to perform action on VirtualMedia. For insert and eject of virtual media this function is used
 func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerRequest) response.RPC {
-    var resp response.RPC
-    var requestBody = req.RequestBody
-    //InsertMedia payload validation
-    if strings.Contains(req.URL,"VirtualMedia.InsertMedia"){
-        var vmiReq mgrmodel.VirtualMediaInsert
-        // Updating the default values
-        vmiReq.Inserted = true
-        vmiReq.WriteProtected = true
-        err := json.Unmarshal(req.RequestBody, &vmiReq)
-        if err != nil {
-            errorMessage := "while unmarshaling the virtual media insert request: " + err.Error()
-            log.Error(errorMessage)
-            resp = common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, []interface{}{}, nil)
-            return resp
-        }
+	var resp response.RPC
+	var requestBody = req.RequestBody
+	//InsertMedia payload validation
+	if strings.Contains(req.URL, "VirtualMedia.InsertMedia") {
+		var vmiReq mgrmodel.VirtualMediaInsert
+		// Updating the default values
+		vmiReq.Inserted = true
+		vmiReq.WriteProtected = true
+		err := json.Unmarshal(req.RequestBody, &vmiReq)
+		if err != nil {
+			errorMessage := "while unmarshaling the virtual media insert request: " + err.Error()
+			log.Error(errorMessage)
+			resp = common.GeneralError(http.StatusBadRequest, response.MalformedJSON, errorMessage, []interface{}{}, nil)
+			return resp
+		}
 
-	    // Validating the request JSON properties for case sensitive
-        invalidProperties, err := common.RequestParamsCaseValidator(req.RequestBody, vmiReq)
-        if err != nil {
-            errMsg := "while validating request parameters for virtual media insert: " + err.Error()
-            log.Error(errMsg)
-            return common.GeneralError(http.StatusInternalServerError, response.InternalError, errMsg, nil, nil)
-        } else if invalidProperties != "" {
-            errorMessage := "one or more properties given in the request body are not valid, ensure properties are listed in uppercamelcase "
-            log.Error(errorMessage)
-            response := common.GeneralError(http.StatusBadRequest, response.PropertyUnknown, errorMessage, []interface{}{invalidProperties}, nil)
-            return response
-        }
+		// Validating the request JSON properties for case sensitive
+		invalidProperties, err := common.RequestParamsCaseValidator(req.RequestBody, vmiReq)
+		if err != nil {
+			errMsg := "while validating request parameters for virtual media insert: " + err.Error()
+			log.Error(errMsg)
+			return common.GeneralError(http.StatusInternalServerError, response.InternalError, errMsg, nil, nil)
+		} else if invalidProperties != "" {
+			errorMessage := "one or more properties given in the request body are not valid, ensure properties are listed in uppercamelcase "
+			log.Error(errorMessage)
+			response := common.GeneralError(http.StatusBadRequest, response.PropertyUnknown, errorMessage, []interface{}{invalidProperties}, nil)
+			return response
+		}
 
-        // Check mandatory fields
-        statuscode, statusMessage, messageArgs, err := validateFields(&vmiReq)
-        if err != nil {
-            errorMessage := "request payload validation failed: " + err.Error()
-            log.Error(errorMessage)
-            resp = common.GeneralError(statuscode, statusMessage, errorMessage, messageArgs, nil)
-            return resp
-        }
-        requestBody, err = json.Marshal(vmiReq)
-	    if err != nil {
-		    log.Error("while marshalling the virtual media insert request: " + err.Error())
-		    resp = common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
-		    return resp
-	    }
-    }
-    // splitting managerID to get uuid
+		// Check mandatory fields
+		statuscode, statusMessage, messageArgs, err := validateFields(&vmiReq)
+		if err != nil {
+			errorMessage := "request payload validation failed: " + err.Error()
+			log.Error(errorMessage)
+			resp = common.GeneralError(statuscode, statusMessage, errorMessage, messageArgs, nil)
+			return resp
+		}
+		requestBody, err = json.Marshal(vmiReq)
+		if err != nil {
+			log.Error("while marshalling the virtual media insert request: " + err.Error())
+			resp = common.GeneralError(http.StatusInternalServerError, response.InternalError, err.Error(), nil, nil)
+			return resp
+		}
+	}
+	// splitting managerID to get uuid
 	requestData := strings.Split(req.ManagerID, ":")
 	log.Info(requestData)
 	uuid := requestData[0]
 	log.Info(req.URL, uuid, string(requestBody))
-    resp = e.deviceCommunication(req.URL, uuid, requestData[1], http.MethodPost, requestBody)
-    return resp
+	resp = e.deviceCommunication(req.URL, uuid, requestData[1], http.MethodPost, requestBody)
+	return resp
 }
 
 // validateFields will validate the request payload, if any mandatory fields are missing then it will generate an error
@@ -455,8 +455,8 @@ func (e *ExternalInterface) deviceCommunication(reqURL, uuid, systemID, httpMeth
 		SystemID:              systemID,
 		ContactClient:         e.Device.ContactClient,
 		DecryptDevicePassword: e.Device.DecryptDevicePassword,
-		HTTPMethod: httpMethod,
-		RequestBody: requestBody,
+		HTTPMethod:            httpMethod,
+		RequestBody:           requestBody,
 	}
 	return e.Device.DeviceRequest(deviceInfoRequest)
 }
