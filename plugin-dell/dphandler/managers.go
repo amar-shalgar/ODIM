@@ -17,6 +17,7 @@ package dphandler
 
 import (
     "encoding/json"
+    "github.com/ODIM-Project/ODIM/lib-utilities/response"
 	pluginConfig "github.com/ODIM-Project/ODIM/plugin-dell/config"
 	"github.com/ODIM-Project/ODIM/plugin-dell/dpmodel"
 	"github.com/ODIM-Project/ODIM/plugin-dell/dpresponse"
@@ -228,6 +229,32 @@ func VirtualMediaActions(ctx iris.Context) {
 		ctx.WriteString(errMsg)
 		return
 	}
+
+	if statusCode == http.StatusNoContent {
+        log.Info("VirtualMediaActions is successful for URI ",)
+        statusCode = http.StatusOK
+        body = vmActionsResponse()
+    }
+
 	ctx.StatusCode(statusCode)
 	ctx.Write(body)
+}
+
+// vmActionsResponse response is used for creating a final response for virtual media actions
+func vmActionsResponse() []byte {
+	resp := dpresponse.ErrorResopnse{
+		Error: dpresponse.Error{
+			Code:    response.Success,
+			Message: "See @Message.ExtendedInfo for more information.",
+			MessageExtendedInfo: []dpresponse.MsgExtendedInfo{
+				dpresponse.MsgExtendedInfo{
+					MessageID:   response.Success,
+					Message:     "Successfully performed virtual media actions",
+					MessageArgs: []string{},
+				},
+			},
+		},
+	}
+	body, _ := json.Marshal(resp)
+	return body
 }

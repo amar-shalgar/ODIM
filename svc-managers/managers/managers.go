@@ -317,10 +317,9 @@ func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerReques
 	resp = e.deviceCommunication(req.URL, uuid, requestData[1], http.MethodPost, requestBody)
 
 	// If the virtualmedia action is success then updating DB
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+	if resp.StatusCode == http.StatusOK {
         vmURI := strings.Replace(req.URL, "/Actions/VirtualMedia.InsertMedia", "", -1)
-        vmURI = strings.Replace(req.URL, "/Actions/VirtualMedia.EjectMedia", "", -1)
-        //deviceData = e.deviceCommunication(vmURI, uuid, requestData[1], http.MethodGET, requestBody)
+        vmURI = strings.Replace(vmURI, "/Actions/VirtualMedia.EjectMedia", "", -1)
         deviceData, err := e.getResourceInfoFromDevice(vmURI, uuid, requestData[1])
         if err != nil {
             log.Error("while trying get on URI "+vmURI+" : " + err.Error())
