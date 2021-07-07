@@ -161,7 +161,7 @@ func GetManagerByURL(url string) (string, *errors.Error) {
 }
 
 // UpdateManagersData will modify the current details to given changes
-func UpdateManagersData(key string, managerData map[string]interface{}) error {
+func UpdateManagersData(key string, managerData map[string]interface{}, table string) error {
 
 	conn, err := common.GetDBConnection(common.InMemory)
 	if err != nil {
@@ -171,7 +171,7 @@ func UpdateManagersData(key string, managerData map[string]interface{}) error {
 	if jerr != nil {
 		return fmt.Errorf("unable to marshal manager data for updating: %v", jerr)
 	}
-	if _, err = conn.Update("Managers", key, string(data)); err != nil {
+	if _, err = conn.Update(table, key, string(data)); err != nil {
 		return fmt.Errorf("unable to update manager details in DB: %v", err)
 	}
 	return nil

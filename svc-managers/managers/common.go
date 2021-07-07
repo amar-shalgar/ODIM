@@ -43,7 +43,7 @@ type DB struct {
 	GetAllKeysFromTable func(string) ([]string, error)
 	GetManagerByURL     func(string) (string, *errors.Error)
 	GetPluginData       func(string) (mgrmodel.Plugin, *errors.Error)
-	UpdateManagersData  func(string, map[string]interface{}) error
+	UpdateManagersData  func(string, map[string]interface{}, string) error
 	GetResource         func(string, string) (string, *errors.Error)
 }
 
