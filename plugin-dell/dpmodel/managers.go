@@ -18,17 +18,12 @@ package dpmodel
 // VirtualMediaInsert struct is used to hold the insert virtual media request payload
 type VirtualMediaInsert struct {
 	Image                string `json:"Image"`
-	Inserted             bool   `json:"Inserted"`
+	Inserted             bool   `json:"Inserted,omitempty"`
 	Password             string `json:"Password,omitempty"`
 	TransferMethod       string `json:"TransferMethod,omitempty"`
 	TransferProtocolType string `json:"TransferProtocolType,omitempty"`
 	UserName             string `json:"UserName,omitempty"`
-	WriteProtected       bool   `json:"WriteProtected"`
+	WriteProtected       bool   `json:"WriteProtected,omitempty"`
 }
 
-// VirtualMediaInsertSouthBound struct is used for device request payload
-type VirtualMediaInsertSouthBound struct {
-	Image          string `json:"Image"`
-	Inserted       bool   `json:"Inserted"`
-	WriteProtected bool   `json:"WriteProtected"`
-}
+

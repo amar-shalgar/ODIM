@@ -202,13 +202,16 @@ func VirtualMediaActions(ctx iris.Context) {
 			return
 		}
 
-		//Creating a payload for inserting virtual media
-		req := dpmodel.VirtualMediaInsertSouthBound{
-			Image:          reqBody.Image,
-			Inserted:       reqBody.Inserted,
-			WriteProtected: reqBody.WriteProtected,
+		device.PostBody, err = json.Marshal(reqBody)
+		if err != nil {
+			log.Error(err.Error())
+			ctx.StatusCode(http.StatusInternalServerError)
+			ctx.WriteString(err.Error())
+			return
 		}
-		device.PostBody, err = json.Marshal(req)
+	}else if strings.Contains(uri, "VirtualMedia.EjectMedia"){
+	    payload := map[string]interface{}{}
+	    device.PostBody, err = json.Marshal(payload)
 		if err != nil {
 			log.Error(err.Error())
 			ctx.StatusCode(http.StatusInternalServerError)
