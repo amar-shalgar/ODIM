@@ -318,23 +318,23 @@ func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerReques
 
 	// If the virtualmedia action is success then updating DB
 	if resp.StatusCode == http.StatusOK {
-        vmURI := strings.Replace(req.URL, "/Actions/VirtualMedia.InsertMedia", "", -1)
-        vmURI = strings.Replace(vmURI, "/Actions/VirtualMedia.EjectMedia", "", -1)
-        deviceData, err := e.getResourceInfoFromDevice(vmURI, uuid, requestData[1])
-        if err != nil {
-            log.Error("while trying get on URI "+vmURI+" : " + err.Error())
-        } else {
-            var vmData map[string]interface{}
-            jerr := json.Unmarshal([]byte(deviceData), &vmData)
-            if jerr != nil {
-                log.Error("while unmarshaling virtual media details: " + jerr.Error())
-            }else{
-                err = e.DB.UpdateManagersData(vmURI, vmData, "VirtualMedia")
-                if err != nil {
-                    log.Error("while saving virtual media details: " + err.Error())
-                }
-            }
-        }
+		vmURI := strings.Replace(req.URL, "/Actions/VirtualMedia.InsertMedia", "", -1)
+		vmURI = strings.Replace(vmURI, "/Actions/VirtualMedia.EjectMedia", "", -1)
+		deviceData, err := e.getResourceInfoFromDevice(vmURI, uuid, requestData[1])
+		if err != nil {
+			log.Error("while trying get on URI " + vmURI + " : " + err.Error())
+		} else {
+			var vmData map[string]interface{}
+			jerr := json.Unmarshal([]byte(deviceData), &vmData)
+			if jerr != nil {
+				log.Error("while unmarshaling virtual media details: " + jerr.Error())
+			} else {
+				err = e.DB.UpdateManagersData(vmURI, vmData, "VirtualMedia")
+				if err != nil {
+					log.Error("while saving virtual media details: " + err.Error())
+				}
+			}
+		}
 	}
 	return resp
 }

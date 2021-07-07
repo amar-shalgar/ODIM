@@ -12,7 +12,7 @@
 //License for the specific language governing permissions and limitations
 // under the License.
 
-//Package dpmodel
+//Package dpmodel ...
 package dpmodel
 
 // VirtualMediaInsert struct is used to hold the insert virtual media request payload
@@ -25,5 +25,3 @@ type VirtualMediaInsert struct {
 	UserName             string `json:"UserName,omitempty"`
 	WriteProtected       bool   `json:"WriteProtected,omitempty"`
 }
-
-

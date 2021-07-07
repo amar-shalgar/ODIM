@@ -22,8 +22,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ODIM-Project/ODIM/plugin-dell/dputilities"
 	pluginConfig "github.com/ODIM-Project/ODIM/plugin-dell/config"
+	"github.com/ODIM-Project/ODIM/plugin-dell/dputilities"
 )
 
 // convertToNorthBoundURI searches the key in an array and return bool

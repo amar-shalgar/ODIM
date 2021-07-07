@@ -16,8 +16,8 @@
 package dphandler
 
 import (
-    "encoding/json"
-    "github.com/ODIM-Project/ODIM/lib-utilities/response"
+	"encoding/json"
+	"github.com/ODIM-Project/ODIM/lib-utilities/response"
 	pluginConfig "github.com/ODIM-Project/ODIM/plugin-dell/config"
 	"github.com/ODIM-Project/ODIM/plugin-dell/dpmodel"
 	"github.com/ODIM-Project/ODIM/plugin-dell/dpresponse"
@@ -210,9 +210,9 @@ func VirtualMediaActions(ctx iris.Context) {
 			ctx.WriteString(err.Error())
 			return
 		}
-	}else if strings.Contains(uri, "VirtualMedia.EjectMedia"){
-	    payload := map[string]interface{}{}
-	    device.PostBody, err = json.Marshal(payload)
+	} else if strings.Contains(uri, "VirtualMedia.EjectMedia") {
+		payload := map[string]interface{}{}
+		device.PostBody, err = json.Marshal(payload)
 		if err != nil {
 			log.Error(err.Error())
 			ctx.StatusCode(http.StatusInternalServerError)
@@ -231,10 +231,10 @@ func VirtualMediaActions(ctx iris.Context) {
 	}
 
 	if statusCode == http.StatusNoContent {
-        log.Info("VirtualMediaActions is successful for URI ",)
-        statusCode = http.StatusOK
-        body = vmActionsResponse()
-    }
+		log.Info("VirtualMediaActions is successful for URI ")
+		statusCode = http.StatusOK
+		body = vmActionsResponse()
+	}
 
 	ctx.StatusCode(statusCode)
 	ctx.Write(body)

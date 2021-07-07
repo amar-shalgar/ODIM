@@ -22,11 +22,11 @@ import (
 	"testing"
 	"time"
 
-	iris "github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/httptest"
 	"github.com/ODIM-Project/ODIM/plugin-dell/config"
 	"github.com/ODIM-Project/ODIM/plugin-dell/dpmodel"
 	"github.com/ODIM-Project/ODIM/plugin-dell/dpresponse"
+	iris "github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/httptest"
 )
 
 func mockManagers(username, password, url string, w http.ResponseWriter) {
@@ -108,7 +108,7 @@ func TestVirtualMediaActions(t *testing.T) {
 	// Start the server.
 	ts.StartTLS()
 	defer ts.Close()
-    time.Sleep(1 * time.Second)
+	time.Sleep(1 * time.Second)
 	mockApp := iris.New()
 	redfishRoutes := mockApp.Party("/redfish/v1")
 	redfishRoutes.Post("/Managers/1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia", VirtualMediaActions)
