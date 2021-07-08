@@ -161,13 +161,13 @@ func GetManagerByURL(url string) (string, *errors.Error) {
 }
 
 // UpdateData will modify the current details to given changes
-func UpdateData(key string, managerData map[string]interface{}, table string) error {
+func UpdateData(key string, updateData map[string]interface{}, table string) error {
 
 	conn, err := common.GetDBConnection(common.InMemory)
 	if err != nil {
 		return fmt.Errorf("unable to connect DB: %v", err)
 	}
-	data, jerr := json.Marshal(managerData)
+	data, jerr := json.Marshal(updateData)
 	if jerr != nil {
 		return fmt.Errorf("unable to marshal data for updating: %v", jerr)
 	}

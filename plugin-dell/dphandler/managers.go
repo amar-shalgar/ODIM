@@ -231,17 +231,27 @@ func VirtualMediaActions(ctx iris.Context) {
 	}
 
 	if statusCode == http.StatusNoContent {
-		log.Info("VirtualMediaActions is successful for URI ")
+		log.Info("VirtualMediaActions is successful for URI : " + uri)
 		statusCode = http.StatusOK
-		body = vmActionsResponse()
+		body, err = createVirtMediaActionResponse()
+		if err != nil {
+			errMsg := "while creating a response for virtual media actions" + err.Error()
+			log.Error(errMsg)
+			ctx.StatusCode(http.StatusInternalServerError)
+			ctx.WriteString(errMsg)
+			return
+		}
+	} else {
+		errResponse := string(body)
+		log.Errorf("VirtualMediaActions is failed for the URI %s, getting response %v ", uri, errResponse)
 	}
 
 	ctx.StatusCode(statusCode)
 	ctx.Write(body)
 }
 
-// vmActionsResponse response is used for creating a final response for virtual media actions
-func vmActionsResponse() []byte {
+// createVirtMediaActionResponse is used for creating a final response for virtual media actions success scenario
+func createVirtMediaActionResponse() ([]byte, error) {
 	resp := dpresponse.ErrorResopnse{
 		Error: dpresponse.Error{
 			Code:    response.Success,
@@ -255,6 +265,6 @@ func vmActionsResponse() []byte {
 			},
 		},
 	}
-	body, _ := json.Marshal(resp)
-	return body
+	body, err := json.Marshal(resp)
+	return body, err
 }
