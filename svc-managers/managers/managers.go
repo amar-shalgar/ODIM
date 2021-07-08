@@ -154,7 +154,7 @@ func (e *ExternalInterface) GetManagers(req *managersproto.ManagerRequest) respo
 					return resp
 				}
 			}
-			err = e.DB.UpdateManagersData(req.URL, managerData, "Managers")
+			err = e.DB.UpdateData(req.URL, managerData, "Managers")
 			if err != nil {
 				errorMessage := "error while saving manager details: " + err.Error()
 				log.Error(errorMessage)
@@ -329,7 +329,7 @@ func (e *ExternalInterface) VirtualMediaActions(req *managersproto.ManagerReques
 			if jerr != nil {
 				log.Error("while unmarshaling virtual media details: " + jerr.Error())
 			} else {
-				err = e.DB.UpdateManagersData(vmURI, vmData, "VirtualMedia")
+				err = e.DB.UpdateData(vmURI, vmData, "VirtualMedia")
 				if err != nil {
 					log.Error("while saving virtual media details: " + err.Error())
 				}

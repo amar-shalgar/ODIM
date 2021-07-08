@@ -108,7 +108,7 @@ func mockGetPluginData(pluginID string) (mgrmodel.Plugin, *errors.Error) {
 	}, nil
 }
 
-func mockUpdateManagersData(key string, managerData map[string]interface{}, table string) error {
+func mockUpdateData(key string, managerData map[string]interface{}, table string) error {
 	return nil
 }
 
@@ -166,7 +166,7 @@ func mockGetExternalInterface() *managers.ExternalInterface {
 			GetAllKeysFromTable: mockGetAllKeysFromTable,
 			GetManagerByURL:     mockGetManagerByURL,
 			GetPluginData:       mockGetPluginData,
-			UpdateManagersData:  mockUpdateManagersData,
+			UpdateData:          mockUpdateData,
 			GetResource:         mockGetResource,
 		},
 	}
