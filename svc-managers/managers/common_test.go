@@ -132,7 +132,7 @@ func mockGetPluginData(pluginID string) (mgrmodel.Plugin, *errors.Error) {
 	}, nil
 }
 
-func mockUpdateData(key string, managerData map[string]interface{}, table string) error {
+func mockUpdateData(key string, updateData map[string]interface{}, table string) error {
 	return nil
 }
 
