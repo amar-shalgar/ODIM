@@ -31,25 +31,31 @@ import (
 
 func mockManagers(username, password, url string, w http.ResponseWriter) {
 	body := `{"data": "success"}`
-	if url == "/ODIM/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia" && username == "admin" {
+
+	insertURL := "/redfish/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia"
+	ejectURL := "/redfish/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia"
+	insertURL = replaceURI(insertURL)
+	ejectURL = replaceURI(ejectURL)
+
+	if url == insertURL && username == "admin" {
 		e, _ := json.Marshal(body)
 		w.WriteHeader(http.StatusOK)
 		w.Write(e)
 		return
 	}
-	if url == "/ODIM/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.InsertMedia" && username != "admin" {
+	if url == insertURL && username != "admin" {
 		e, _ := json.Marshal(body)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write(e)
 		return
 	}
-	if url == "/ODIM/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia" && username == "admin" {
+	if url == ejectURL && username == "admin" {
 		e, _ := json.Marshal(body)
 		w.WriteHeader(http.StatusOK)
 		w.Write(e)
 		return
 	}
-	if url == "/ODIM/v1/Managers/1/VirtualMedia/1/Actions/VirtualMedia.EjectMedia" && username != "admin" {
+	if url == ejectURL && username != "admin" {
 		e, _ := json.Marshal(body)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write(e)
@@ -59,9 +65,12 @@ func mockManagers(username, password, url string, w http.ResponseWriter) {
 }
 
 func TestGetManagerCollection(t *testing.T) {
+	url := "/redfish/v1"
+	url = replaceURI(url)
+
 	config.SetUpMockConfig(t)
 	mockApp := iris.New()
-	redfishRoutes := mockApp.Party("/ODIM/v1")
+	redfishRoutes := mockApp.Party(url)
 
 	redfishRoutes.Get("/Managers", GetManagersCollection)
 
@@ -71,19 +80,21 @@ func TestGetManagerCollection(t *testing.T) {
 	var deviceDetails = dpmodel.Device{
 		Host: "",
 	}
+	managerURL := url + "/Managers"
 	//Unit Test for success scenario
-	e.GET("/ODIM/v1/Managers").WithJSON(deviceDetails).Expect().Status(http.StatusOK)
+	e.GET(managerURL).WithJSON(deviceDetails).Expect().Status(http.StatusOK)
 
 	//Case for invalid token
-	e.GET("/ODIM/v1/Managers").WithHeader("X-Auth-Token", "Invalidtoken").WithJSON(deviceDetails).Expect().Status(http.StatusUnauthorized)
+	e.GET(managerURL).WithHeader("X-Auth-Token", "Invalidtoken").WithJSON(deviceDetails).Expect().Status(http.StatusUnauthorized)
 
 }
 
 func TestGetManager(t *testing.T) {
+	url := "/redfish/v1"
+	url = replaceURI(url)
 	config.SetUpMockConfig(t)
 	mockApp := iris.New()
-	redfishRoutes := mockApp.Party("/ODIM/v1")
-
+	redfishRoutes := mockApp.Party(url)
 	redfishRoutes.Get("/Managers", GetManagersInfo)
 
 	dpresponse.PluginToken = "token"
@@ -92,11 +103,12 @@ func TestGetManager(t *testing.T) {
 	var deviceDetails = dpmodel.Device{
 		Host: "",
 	}
+	managerURL := url + "/Managers"
 	//Unit Test for success scenario
-	e.GET("/ODIM/v1/Managers").WithJSON(deviceDetails).Expect().Status(http.StatusOK)
+	e.GET(managerURL).WithJSON(deviceDetails).Expect().Status(http.StatusOK)
 
 	//Case for invalid token
-	e.GET("/ODIM/v1/Managers").WithHeader("X-Auth-Token", "Invalidtoken").WithJSON(deviceDetails).Expect().Status(http.StatusUnauthorized)
+	e.GET(managerURL).WithHeader("X-Auth-Token", "Invalidtoken").WithJSON(deviceDetails).Expect().Status(http.StatusUnauthorized)
 
 }
 
