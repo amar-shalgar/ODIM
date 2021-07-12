@@ -191,26 +191,8 @@ func VirtualMediaActions(ctx iris.Context) {
 		PostBody: deviceDetails.PostBody,
 	}
 
-	// insert virtual media request modifications
-	if strings.Contains(uri, "VirtualMedia.InsertMedia") {
-		var reqBody dpmodel.VirtualMediaInsert
-		err = json.Unmarshal(device.PostBody, &reqBody)
-		if err != nil {
-			errMsg := "While unmarshaling the request to insert a virtual media, got: " + err.Error()
-			log.Error(errMsg)
-			ctx.StatusCode(http.StatusInternalServerError)
-			ctx.WriteString(errMsg)
-			return
-		}
-
-		device.PostBody, err = json.Marshal(reqBody)
-		if err != nil {
-			log.Error(err.Error())
-			ctx.StatusCode(http.StatusInternalServerError)
-			ctx.WriteString(err.Error())
-			return
-		}
-	} else if strings.Contains(uri, "VirtualMedia.EjectMedia") {
+	// creating a eject virtual media payload for dell plugin
+	if strings.Contains(uri, "VirtualMedia.EjectMedia") {
 		payload := map[string]interface{}{}
 		device.PostBody, err = json.Marshal(payload)
 		if err != nil {
